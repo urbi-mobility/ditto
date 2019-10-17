@@ -1,10 +1,10 @@
-import React from 'react';
-import { StatusBar, SafeAreaView, Text } from 'react-native';
-import { registeredTextStyle } from 'react-native-urbi-ui/utils/textStyles';
+import React from "react";
+import { StatusBar, SafeAreaView, Text } from "react-native";
+import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
 
 export const TestScreen = () => (
   <>
-    <StatusBar barStyle="light-content" />
+    <StatusBar barStyle="dark-content" />
     <SafeAreaView>
       <Text style={titleStyle}>Navigation works, too! 🎉</Text>
     </SafeAreaView>
@@ -12,7 +12,7 @@ export const TestScreen = () => (
 );
 
 TestScreen.navigationOptions = {
-  headerTitle: 'Success',
+  headerTitle: "Success"
 };
 
-const titleStyle = registeredTextStyle('title');
+const titleStyle = registeredTextStyle("title");

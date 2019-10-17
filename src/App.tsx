@@ -1,25 +1,38 @@
-import React from 'react';
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text } from 'react-native';
-import ButtonRegular from 'react-native-urbi-ui/molecules/buttons/ButtonRegular';
-import { colors } from 'react-native-urbi-ui/utils/colors';
-import { registeredTextStyle } from 'react-native-urbi-ui/utils/textStyles';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { createAppContainer } from 'react-navigation';
+import React from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text
+} from "react-native";
+import { gestureHandlerRootHOC } from "react-native-gesture-handler";
+import ButtonRegular from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
+import { colors } from "react-native-urbi-ui/utils/colors";
+import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
+import { Colors } from "react-native/Libraries/NewAppScreen";
+import { createAppContainer } from "react-navigation";
 import {
   createStackNavigator,
-  NavigationStackScreenProps,
   NavigationStackProp,
-} from 'react-navigation-stack';
-import { TestScreen } from 'src/screens/TestScreen';
-import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
+  NavigationStackScreenProps
+} from "react-navigation-stack";
+import { createBottomTabNavigator } from "react-navigation-tabs";
+import { HelpScreen } from "src/screens/HelpScreen";
+import { ProfileScreen } from "src/screens/ProfileScreen";
+import { TestScreen } from "src/screens/TestScreen";
 
-const onButtonPress = (navigation: NavigationStackProp) => () => navigation.navigate('Test');
+const onButtonPress = (navigation: NavigationStackProp) => () =>
+  navigation.navigate("Test");
 
 const App = (props: NavigationStackScreenProps) => (
   <>
     <StatusBar barStyle="light-content" />
-    <SafeAreaView>
-      <ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scrollView}>
+    <SafeAreaView style={styles.wrapper}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={styles.scrollView}
+      >
         <Text style={[styles.text, hero]}>Welcome to ditto!</Text>
         <ButtonRegular
           buttonStyle="brand"
@@ -33,26 +46,52 @@ const App = (props: NavigationStackScreenProps) => (
 
 App.navigationOptions = { header: null };
 
-const hero = registeredTextStyle('hero', colors.brand);
+const hero = registeredTextStyle("hero", colors.brand);
 
 const styles = StyleSheet.create({
+  wrapper: {
+    backgroundColor: Colors.lighter
+  },
   text: {
-    textAlign: 'center',
-    marginBottom: 15,
+    textAlign: "center",
+    marginBottom: 15
   },
   scrollView: {
-    backgroundColor: Colors.lighter,
-    padding: 20,
-  },
+    padding: 20
+  }
 });
 
-const AppNavigator = createStackNavigator(
+const HelpNavigator = createStackNavigator({
+  Home: HelpScreen
+});
+
+const HomeNavigator = createStackNavigator(
   {
     Home: App,
-    Test: TestScreen,
+    Test: TestScreen
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: "Home"
+  }
+);
+
+const ProfileNavigator = createStackNavigator(
+  {
+    Home: ProfileScreen
+  },
+  {
+    initialRouteName: "Home"
+  }
+);
+
+const AppNavigator = createBottomTabNavigator(
+  {
+    Help: HelpNavigator,
+    Home: HomeNavigator,
+    Profile: ProfileNavigator
+  },
+  {
+    initialRouteName: "Home"
   }
 );
 
