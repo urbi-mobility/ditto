@@ -1,3 +1,5 @@
+import "./globals";
+import "node-libs-react-native/globals";
 import React from "react";
 import {
   SafeAreaView,
@@ -20,14 +22,14 @@ import {
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import { HelpScreen } from "src/screens/HelpScreen";
 import { ProfileScreen } from "src/screens/ProfileScreen";
-import { TestScreen } from "src/screens/TestScreen";
+import { HomeScreen } from "src/screens/HomeScreen";
 
 const onButtonPress = (navigation: NavigationStackProp) => () =>
   navigation.navigate("Test");
 
 const App = (props: NavigationStackScreenProps) => (
   <>
-    <StatusBar barStyle="light-content" />
+    <StatusBar barStyle="dark-content" />
     <SafeAreaView style={styles.wrapper}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
@@ -68,7 +70,7 @@ const HelpNavigator = createStackNavigator({
 const HomeNavigator = createStackNavigator(
   {
     Home: App,
-    Test: TestScreen
+    Test: HomeScreen
   },
   {
     initialRouteName: "Home"

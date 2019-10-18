@@ -1,0 +1,93 @@
+diff --git a/node_modules/brorand/index.js b/node_modules/brorand/index.js
+index 9a0fff4..9d18fd9 100644
+--- a/node_modules/brorand/index.js
++++ b/node_modules/brorand/index.js
+@@ -1,8 +1,7 @@
+ var r;
+ 
+ module.exports = function rand(len) {
+-  if (!r)
+-    r = new Rand(null);
++  if (!r) r = new Rand(null);
+ 
+   return r.generate(len);
+ };
+@@ -18,16 +17,14 @@ Rand.prototype.generate = function generate(len) {
+ 
+ // Emulate crypto API using randy
+ Rand.prototype._rand = function _rand(n) {
+-  if (this.rand.getBytes)
+-    return this.rand.getBytes(n);
++  if (this.rand.getBytes) return this.rand.getBytes(n);
+ 
+   var res = new Uint8Array(n);
+-  for (var i = 0; i < res.length; i++)
+-    res[i] = this.rand.getByte();
++  for (var i = 0; i < res.length; i++) res[i] = this.rand.getByte();
+   return res;
+ };
+ 
+-if (typeof self === 'object') {
++if (typeof self === "object") {
+   if (self.crypto && self.crypto.getRandomValues) {
+     // Modern browsers
+     Rand.prototype._rand = function _rand(n) {
+@@ -43,23 +40,43 @@ if (typeof self === 'object') {
+       return arr;
+     };
+ 
+-  // Safari's WebWorkers do not have `crypto`
+-  } else if (typeof window === 'object') {
+-    // Old junk
+-    Rand.prototype._rand = function() {
+-      throw new Error('Not implemented yet');
+-    };
++    // Safari's WebWorkers do not have `crypto`
++  } else if (typeof window === "object") {
++    try {
++      var randBytes = require("react-native-randombytes").randomBytes;
++      var found = false;
++      if (typeof randBytes === "function") {
++        found = true;
++        Rand.prototype._rand = function _rand(n) {
++          return randBytes(n);
++        };
++      }
++    } catch (e) {}
++    if (!found) {
++      // Old junk
++      Rand.prototype._rand = function() {
++        throw new Error("Nope");
++      };
++    }
+   }
+ } else {
+-  // Node.js or Web worker with no crypto support
+   try {
+-    var crypto = require('crypto');
+-    if (typeof crypto.randomBytes !== 'function')
+-      throw new Error('Not supported');
++    var randBytes = require("react-native-randombytes").randomBytes;
++    if (typeof randBytes === "function") {
++      Rand.prototype._rand = function _rand(n) {
++        return randBytes(n);
++      };
++    } else {
++      // Node.js or Web worker with no crypto support
++      try {
++        var crypto = require("crypto");
++        if (typeof crypto.randomBytes !== "function")
++          throw new Error("Not supported");
+ 
+-    Rand.prototype._rand = function _rand(n) {
+-      return crypto.randomBytes(n);
+-    };
+-  } catch (e) {
+-  }
++        Rand.prototype._rand = function _rand(n) {
++          return crypto.randomBytes(n);
++        };
++      } catch (e) {}
++    }
++  } catch (e) {}
+ }

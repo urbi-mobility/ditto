@@ -5,13 +5,20 @@
  * @format
  */
 
+const nodeLibs = require("node-libs-react-native");
+nodeLibs.vm = require.resolve("vm-browserify");
+nodeLibs.crypto = require.resolve("react-native-crypto");
+
 module.exports = {
   transformer: {
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: false,
-        inlineRequires: false,
-      },
-    }),
+        inlineRequires: false
+      }
+    })
   },
+  resolver: {
+    extraNodeModules: nodeLibs
+  }
 };
