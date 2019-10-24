@@ -1,10 +1,16 @@
 import React, { useState } from "react";
-import { StatusBar, SafeAreaView, Text, StyleSheet, View } from "react-native";
+import {
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
+} from "react-native";
+import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
+import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
 import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
-import ButtonRegular from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
-import SectionsDivider from "react-native-urbi-ui/molecules/SectionsDivider";
 import { generateNewKeystore } from "src/utils/cryptoUtils";
-import { colors } from "react-native-urbi-ui/utils/colors";
 
 export const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -39,7 +45,13 @@ export const HomeScreen = () => {
         {twelveWords ? (
           <View style={styles.wrapper}>
             <SectionsDivider label="Mnemonic" />
-            <Text style={[textStyle, styles.withPadding]}>{twelveWords}</Text>
+            <TextInput
+              style={[textStyle, styles.withPadding]}
+              editable={false}
+              multiline
+            >
+              {twelveWords}
+            </TextInput>
           </View>
         ) : (
           undefined
@@ -47,7 +59,13 @@ export const HomeScreen = () => {
         {address ? (
           <View style={styles.wrapper}>
             <SectionsDivider label="Address" />
-            <Text style={[textStyle, styles.withPadding]}>{address}</Text>
+            <TextInput
+              style={[textStyle, styles.withPadding]}
+              editable={false}
+              multiline
+            >
+              {address}
+            </TextInput>
           </View>
         ) : (
           undefined

@@ -1,15 +1,15 @@
 import "./globals";
-import "node-libs-react-native/globals";
 import React from "react";
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text
+  Text,
+  Image
 } from "react-native";
 import { gestureHandlerRootHOC } from "react-native-gesture-handler";
-import ButtonRegular from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
+import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
 import { colors } from "react-native-urbi-ui/utils/colors";
 import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
 import { Colors } from "react-native/Libraries/NewAppScreen";
@@ -23,6 +23,7 @@ import { createBottomTabNavigator } from "react-navigation-tabs";
 import { HelpScreen } from "src/screens/HelpScreen";
 import { ProfileScreen } from "src/screens/ProfileScreen";
 import { HomeScreen } from "src/screens/HomeScreen";
+import images from "src/utils/images";
 
 const onButtonPress = (navigation: NavigationStackProp) => () =>
   navigation.navigate("Test");
@@ -93,7 +94,18 @@ const AppNavigator = createBottomTabNavigator(
     Profile: ProfileNavigator
   },
   {
-    initialRouteName: "Home"
+    initialRouteName: "Home",
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused }) => {
+        const { routeName } = navigation.state;
+        const icon =
+          images[`${routeName.toLowerCase()}${focused ? "_focused" : ""}`];
+        return <Image source={icon} />;
+      }
+    }),
+    tabBarOptions: {
+      showLabel: false
+    }
   }
 );
 

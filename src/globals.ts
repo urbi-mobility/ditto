@@ -7,6 +7,10 @@ import url from "url";
  * @platfroms IE11, Safari, Android for React Native Apps.
  * @author Mozilla Development Network
  */
+
+// needed by bitcore-lib
+global.Buffer = require("buffer").Buffer;
+
 if (!Uint8Array.prototype.fill) {
   Object.defineProperty(Array.prototype, "fill", {
     value: function(value: any) {
