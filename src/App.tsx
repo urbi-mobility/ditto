@@ -70,8 +70,7 @@ const HelpNavigator = createStackNavigator({
 
 const HomeNavigator = createStackNavigator(
   {
-    Home: App,
-    Test: HomeScreen
+    Home: HomeScreen
   },
   {
     initialRouteName: "Home"

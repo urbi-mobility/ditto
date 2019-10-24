@@ -1,89 +1,89 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
-  Text,
-  TextInput,
-  View
+  ScrollView,
+  ImageRequireSource
 } from "react-native";
-import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
-import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
-import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
-import { generateNewKeystore } from "src/utils/cryptoUtils";
+import { Card } from "react-native-urbi-ui/components/Card";
+import {
+  CardHeaderProps,
+  CardHeader
+} from "react-native-urbi-ui/molecules/card/CardHeader";
+import { VehicleImg } from "react-native-urbi-ui/molecules/img/VehicleImg";
+import { showAlert } from "react-native-urbi-ui/utils/functions";
 
-export const HomeScreen = () => {
-  const [loading, setLoading] = useState(false);
-  const [twelveWords, setTwelveWords] = useState("");
-  const [address, setAddress] = useState("");
-
-  const onButtonPress = () => {
-    setLoading(true);
-    requestAnimationFrame(async () => {
-      const urbiKeyStore = await generateNewKeystore();
-      const { address, mnemonic } = urbiKeyStore;
-      setAddress(address);
-      setTwelveWords(mnemonic);
-      setLoading(false);
-    });
-  };
-
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView style={styles.wrapper}>
-        <View style={styles.withPadding}>
-          <Text style={titleStyle}>Navigation works, too! 🎉</Text>
-          <ButtonRegular
-            buttonStyle="primary"
-            style={styles.button}
-            label="Generate a keystore!"
-            onPress={onButtonPress}
-            loading={loading}
-          />
-        </View>
-        {twelveWords ? (
-          <View style={styles.wrapper}>
-            <SectionsDivider label="Mnemonic" />
-            <TextInput
-              style={[textStyle, styles.withPadding]}
-              editable={false}
-              multiline
-            >
-              {twelveWords}
-            </TextInput>
-          </View>
-        ) : (
-          undefined
-        )}
-        {address ? (
-          <View style={styles.wrapper}>
-            <SectionsDivider label="Address" />
-            <TextInput
-              style={[textStyle, styles.withPadding]}
-              editable={false}
-              multiline
-            >
-              {address}
-            </TextInput>
-          </View>
-        ) : (
-          undefined
-        )}
-      </SafeAreaView>
-    </>
-  );
+type CardInfo = {
+  header: CardHeaderProps;
+  image: ImageRequireSource;
+  logo: ImageRequireSource;
+  description: string;
 };
+
+const fakeNews: CardInfo[] = [
+  {
+    header: {
+      topLabel: "kickscooter sharing",
+      title: "Circ",
+      bigLabel: "Free",
+      struckout: "4.99€"
+    },
+    image: require("../../assets/ic_lime_kick.png"),
+    logo: require("../../assets/ic_flash.png"),
+    description: "Free registration + 5 free rides"
+  },
+  {
+    header: {
+      topLabel: "Car sharing",
+      title: "Miles",
+      bigLabel: "Free",
+      struckout: "9.99€"
+    },
+    image: require("../../assets/ic_driveby_a3.png"),
+    logo: require("../../assets/ic_driveby.png"),
+    description: "Free registration"
+  },
+  {
+    header: {
+      topLabel: "Scooter sharing",
+      title: "Coup",
+      bigLabel: "Free",
+      struckout: "7.99€"
+    },
+    image: require("../../assets/ic_coup_gogoro.png"),
+    logo: require("../../assets/ic_coup.png"),
+    description: "Free registration + 30 minutes"
+  }
+];
+
+const onCardPress = (provider: string) => () =>
+  showAlert(`zoom zoom zoom, we're going to ${provider}-oon`);
+
+export const HomeScreen = () => (
+  <>
+    <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={styles.wrapper}>
+      <ScrollView style={styles.scrollview}>
+        {fakeNews.map((c, i) => (
+          <Card
+            key={`card-${i}`}
+            header={<CardHeader {...c.header} />}
+            image={<VehicleImg image={c.image} providerLogo={c.logo} />}
+            description={c.description}
+            onPress={onCardPress(c.header.title)}
+          />
+        ))}
+      </ScrollView>
+    </SafeAreaView>
+  </>
+);
 
 HomeScreen.navigationOptions = {
-  headerTitle: "Success"
+  headerTitle: "Deals"
 };
-
-const titleStyle = registeredTextStyle("title");
-const textStyle = registeredTextStyle("micro");
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1, justifyContent: "flex-start" },
-  withPadding: { flex: 1, padding: 20 },
-  button: { marginTop: 20 }
+  scrollview: { paddingTop: 20 }
 });
