@@ -1,4 +1,5 @@
 import "./globals";
+import "node-libs-react-native/globals"
 import React from "react";
 import { Image } from "react-native";
 import { gestureHandlerRootHOC } from "react-native-gesture-handler";
@@ -9,6 +10,7 @@ import { HelpScreen } from "src/screens/HelpScreen";
 import { HomeScreen } from "src/screens/HomeScreen";
 import { ProfileScreen } from "src/screens/ProfileScreen";
 import images from "src/utils/images";
+import { DrivingLicenseForm } from "./screens/DrivingLicenseForm";
 
 const HelpNavigator = createStackNavigator({
   Home: HelpScreen
@@ -25,7 +27,8 @@ const HomeNavigator = createStackNavigator(
 
 const ProfileNavigator = createStackNavigator(
   {
-    Home: ProfileScreen
+    Home: ProfileScreen,
+    Form: DrivingLicenseForm
   },
   {
     initialRouteName: "Home"
@@ -34,9 +37,9 @@ const ProfileNavigator = createStackNavigator(
 
 const AppNavigator = createBottomTabNavigator(
   {
-    Help: HelpNavigator,
+    Profile: ProfileNavigator,
     Home: HomeNavigator,
-    Profile: ProfileNavigator
+    Help: HelpNavigator
   },
   {
     initialRouteName: "Home",

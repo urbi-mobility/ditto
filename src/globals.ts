@@ -9,7 +9,7 @@ import url from "url";
  */
 
 // needed by bitcore-lib
-global.Buffer = require("buffer").Buffer;
+// global.Buffer = require("buffer").Buffer;
 
 if (!Uint8Array.prototype.fill) {
   Object.defineProperty(Array.prototype, "fill", {
