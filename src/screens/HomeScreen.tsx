@@ -18,6 +18,7 @@ import { showAlert } from "react-native-urbi-ui/utils/functions";
 import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
 import { colors } from "react-native-urbi-ui/utils/colors";
 import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
+import { i18n } from "src/i18n";
 
 type CardInfo = {
   header: CardHeaderProps;
@@ -76,13 +77,10 @@ export const HomeScreen = () => (
     <SafeAreaView style={styles.wrapper}>
       <ScrollView style={styles.scrollview}>
         <View style={styles.intro}>
-          <Text style={body}>
-            Unlock other sharing mobility providers with our exclusive deals.
-            Just one tap, you won't need to verify your identity again!
-          </Text>
+          <Text style={body}>{i18n("home_body")}</Text>
         </View>
         <SectionsDivider
-          label="active promos"
+          label={i18n("home_activePromos")}
           labelColor={colors.ughina}
           backgroundColor={colors.ulisse}
         />
@@ -101,7 +99,7 @@ export const HomeScreen = () => (
 );
 
 HomeScreen.navigationOptions = {
-  headerTitle: "Deals"
+  headerTitle: i18n("navigation_deals")
 };
 
 const styles = StyleSheet.create({

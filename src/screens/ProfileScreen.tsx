@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, View, ViewStyle, Text } from "react-native";
+import { i18n } from "src/i18n";
 
 const styles = StyleSheet.create({
   Wrapper: {
@@ -7,14 +8,14 @@ const styles = StyleSheet.create({
   } as ViewStyle
 });
 
-export const ProfileScreenUnmemoized = () => (
+export const ProfileScreen = () => (
   <View style={styles.Wrapper}>
     <Text>Profile</Text>
   </View>
 );
 
-ProfileScreenUnmemoized.navigationOptions = {
-  headerTitle: "Profile"
-};
+const name = ""; // TODO load it from local storage
 
-export const ProfileScreen = React.memo(ProfileScreenUnmemoized);
+ProfileScreen.navigationOptions = {
+  headerTitle: i18n("navigation_profile", { name })
+};

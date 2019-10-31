@@ -11,6 +11,7 @@ import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegu
 import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
 import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
 import { generateNewKeystore } from "src/utils/cryptoUtils";
+import { i18n } from "src/i18n";
 
 export const HelpScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -76,7 +77,7 @@ export const HelpScreen = () => {
 };
 
 HelpScreen.navigationOptions = {
-  headerTitle: "Testing"
+  headerTitle: i18n("navigation_faq")
 };
 
 const titleStyle = registeredTextStyle("title");
