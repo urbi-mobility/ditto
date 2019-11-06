@@ -10,8 +10,17 @@ import {
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
 import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
 import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
+import Accordion from "src/Accordion";
 import { generateNewKeystore } from "src/utils/cryptoUtils";
 import { i18n } from "src/i18n";
+import { Locale } from "src/i18n/en";
+
+const sectionIds = ["howDoesItWork", "whyBlockchain", "anythingMissing"];
+
+const sections = sectionIds.map(i => ({
+  title: i18n(`help_${i}Title` as keyof Locale),
+  content: i18n(`help_${i}Body` as keyof Locale)
+}));
 
 export const HelpScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -33,8 +42,8 @@ export const HelpScreen = () => {
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.wrapper}>
-        <View style={styles.withPadding}>
-          <Text style={titleStyle}>Navigation works, too! 🎉</Text>
+        <Accordion sections={sections} />
+        <View style={styles.buttonContainer}>
           <ButtonRegular
             buttonStyle="primary"
             style={styles.button}
@@ -44,7 +53,7 @@ export const HelpScreen = () => {
           />
         </View>
         {twelveWords ? (
-          <View style={styles.wrapper}>
+          <View style={styles.sections}>
             <SectionsDivider label="Mnemonic" />
             <TextInput
               style={[textStyle, styles.withPadding]}
@@ -58,7 +67,7 @@ export const HelpScreen = () => {
           undefined
         )}
         {address ? (
-          <View style={styles.wrapper}>
+          <View style={styles.sections}>
             <SectionsDivider label="Address" />
             <TextInput
               style={[textStyle, styles.withPadding]}
@@ -80,11 +89,12 @@ HelpScreen.navigationOptions = {
   headerTitle: i18n("navigation_faq")
 };
 
-const titleStyle = registeredTextStyle("title");
 const textStyle = registeredTextStyle("micro");
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1, justifyContent: "flex-start" },
-  withPadding: { flex: 1, padding: 20 },
+  sections: { flexGrow: 0, flexShrink: 0 },
+  withPadding: { flexGrow: 1, flexShrink: 0, padding: 20 },
+  buttonContainer: { height: 100, padding: 20 },
   button: { marginTop: 20 }
 });

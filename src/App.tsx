@@ -1,5 +1,5 @@
 import "./globals";
-import "node-libs-react-native/globals"
+import "node-libs-react-native/globals";
 import React from "react";
 import { Image } from "react-native";
 import { gestureHandlerRootHOC } from "react-native-gesture-handler";
