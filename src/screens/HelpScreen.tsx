@@ -14,6 +14,8 @@ import Accordion from "src/Accordion";
 import { generateNewKeystore } from "src/utils/cryptoUtils";
 import { i18n } from "src/i18n";
 import { Locale } from "src/i18n/en";
+import _ from "lodash";
+import * as Keychain from "react-native-keychain";
 
 const sectionIds = ["howDoesItWork", "whyBlockchain", "anythingMissing"];
 
@@ -31,6 +33,13 @@ export const HelpScreen = () => {
     setLoading(true);
     requestAnimationFrame(async () => {
       const urbiKeyStore = await generateNewKeystore();
+      Keychain.setInternetCredentials(
+        "urbiKeyStore",
+        "urbiKeyStore",
+        JSON.stringify(
+          _.pick(urbiKeyStore, ["password", "mnemonic", "address"])
+        )
+      );
       const { address, mnemonic } = urbiKeyStore;
       setAddress(address);
       setTwelveWords(mnemonic);

@@ -10,7 +10,9 @@ import { HelpScreen } from "src/screens/HelpScreen";
 import { HomeScreen } from "src/screens/HomeScreen";
 import { ProfileScreen } from "src/screens/ProfileScreen";
 import images from "src/utils/images";
-import { DrivingLicenseForm } from "./screens/DrivingLicenseForm";
+import ValidationPersonalForm from "./screens/validation/ValidationPersonalForm";
+import ValidationStartPage from "./screens/validation/ValidationStartPage";
+import ValidationDrivingLicenseForm from "./screens/validation/ValidationDrivingLicenseForm";
 
 const HelpNavigator = createStackNavigator({
   Home: HelpScreen
@@ -28,7 +30,9 @@ const HomeNavigator = createStackNavigator(
 const ProfileNavigator = createStackNavigator(
   {
     Home: ProfileScreen,
-    Form: DrivingLicenseForm
+    ValidationStartPage: ValidationStartPage,
+    ValidationPersonalForm: ValidationPersonalForm,
+    ValidationDrivingLicenseForm: ValidationDrivingLicenseForm
   },
   {
     initialRouteName: "Home"
