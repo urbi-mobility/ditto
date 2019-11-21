@@ -3,7 +3,7 @@ export type ValidationFormData = {
   firstName: string;
   lastName: string;
   nationality: string;
-  birthDate: Date;
+  birthDate: string;
   birthCountry: string;
   birthProvince: string;
   birthLocality: string;
@@ -35,7 +35,7 @@ export const emptyValidationFormData: ValidationFormData = {
   firstName: "",
   lastName: "",
   nationality: "",
-  birthDate: new Date(),
+  birthDate: new Date().toISOString(),
   birthCountry: "",
   birthProvince: "",
   birthLocality: "",

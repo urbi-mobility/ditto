@@ -1,5 +1,5 @@
 import "./globals";
-import "node-libs-react-native/globals";
+import "node-libs-react-native/globals"; // comment to make debugging work
 import React from "react";
 import { Image } from "react-native";
 import { gestureHandlerRootHOC } from "react-native-gesture-handler";
@@ -8,6 +8,7 @@ import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import { HelpScreen } from "src/screens/HelpScreen";
 import { HomeScreen } from "src/screens/HomeScreen";
+import { OnboardingScreen } from "src/screens/OnboardingScreen";
 import { ProfileScreen } from "src/screens/ProfileScreen";
 import images from "src/utils/images";
 import ValidationPersonalForm from "./screens/validation/ValidationPersonalForm";
@@ -20,10 +21,11 @@ const HelpNavigator = createStackNavigator({
 
 const HomeNavigator = createStackNavigator(
   {
-    Home: HomeScreen
+    Home: HomeScreen,
+    Onboarding: OnboardingScreen
   },
   {
-    initialRouteName: "Home"
+    initialRouteName: "Onboarding"
   }
 );
 

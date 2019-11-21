@@ -7,6 +7,7 @@ import { ListItemTextInput } from "react-native-urbi-ui/components/form/ListItem
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
 import { colors } from "react-native-urbi-ui/utils/colors";
 import SafeAreaView from "react-native-safe-area-view";
+import { DatePicker } from "react-native-urbi-ui/components/form/DatePicker";
 import UrbiForm, {
   UrbiFormProps
 } from "react-native-urbi-ui/components/form/UrbiForm";
@@ -61,36 +62,26 @@ class ValidationPersonalForm extends React.PureComponent<
         <ListItemTextInput
           name="firstName"
           label="First name"
-          type="username"
-          error=""
+          type="text"
           focusable
         />
         <ListItemTextInput
           name="lastName"
           label="Last name"
-          type="username"
-          error=""
+          type="text"
           focusable
         />
         <ListItemTextInput
           name="phoneNumber"
           label="Phone number"
-          type="username"
-          error=""
+          type="text"
           focusable
         />
-        <ListItemTextInput
-          name="birthDate"
-          label="Birth date"
-          type="username"
-          error=""
-          focusable
-        />
+        <DatePicker name="birthDate" label="Birth date" mode="date" focusable />
         <ListItemTextInput
           name="birthCountry"
           label="Birth country"
-          type="username"
-          error=""
+          type="text"
           focusable
         />
       </UrbiForm>
