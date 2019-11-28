@@ -1,21 +1,22 @@
+import { Formik } from "formik";
+import _ from "lodash";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
+import * as Keychain from "react-native-keychain";
 import SafeAreaView from "react-native-safe-area-view";
-import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
-import { ScrollView } from "react-native";
-import { colors } from "react-native-urbi-ui/utils/colors";
 import { ListItemTextInput } from "react-native-urbi-ui/components/form/ListItemTextInput";
 import UrbiForm, {
   UrbiFormProps
 } from "react-native-urbi-ui/components/form/UrbiForm";
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
-import { Formik } from "formik";
-import { sign, createKeystore, UrbiKeyStore } from "../../utils/cryptoUtils";
-import * as Keychain from "react-native-keychain";
-import { serializeToJson } from "src/utils/jsonUtils";
-import _ from "lodash";
-import { ValidationFormData } from "src/models";
+import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
+import { colors } from "react-native-urbi-ui/utils/colors";
 import { NavigationStackScreenProps } from "react-navigation-stack";
+import { ValidationFormData } from "src/models";
+import { createKeystore, sign } from "src/utils/cryptoUtils";
+import { serializeToJson } from "src/utils/jsonUtils";
+import { DatePicker } from "react-native-urbi-ui/components/form/DatePicker";
+import { i18n, appLocaleShort } from "src/i18n";
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
@@ -88,28 +89,27 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
         scrollViewAnchor={this.state.scrollViewAnchor}
       >
         <SectionsDivider
-          label="Driving License Information"
+          label={i18n("dl_information")}
           backgroundColor={colors.ulisse}
         />
         <ListItemTextInput
           name="drivingLicense.number"
-          label="Number"
-          type="username"
-          error=""
+          label={i18n("dl_number")}
+          type="text"
           focusable
         />
-        <ListItemTextInput
+        <DatePicker
           name="drivingLicense.issueDate"
-          label="Issue Date"
-          type="username"
-          error=""
+          label={i18n("dl_issueDate")}
+          mode="date"
+          locale={appLocaleShort}
           focusable
         />
-        <ListItemTextInput
+        <DatePicker
           name="drivingLicense.expiryDate"
-          label="Expiry Date"
-          type="username"
-          error=""
+          label={i18n("dl_expiryDate")}
+          mode="date"
+          locale={appLocaleShort}
           focusable
         />
       </UrbiForm>
@@ -118,7 +118,11 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
 
   render = () => (
     <SafeAreaView style={styles.wrapper}>
-      <ScrollView ref={this.scrollView}>
+      <ScrollView
+        ref={this.scrollView}
+        keyboardShouldPersistTaps="always"
+        keyboardDismissMode="on-drag"
+      >
         <Formik
           initialValues={this.state.validationFormData}
           onSubmit={this.submit}
@@ -128,7 +132,7 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
         <ButtonRegular
           style={styles.button}
           buttonStyle="primary"
-          label="Next"
+          label={i18n("next")}
           onPress={() => this.submit(this.state.validationFormData)}
         />
       </ScrollView>

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-community/datetimepicker": "^2.1.0",
+    "date-fns": "^2.8.1",
     "eth-lightwallet": "^3.0.1",
     "formik": "1.5.7",
     "i18n-js": "^3.3.0",
@@ -30,7 +31,7 @@
     "react-native-randombytes": "^3.5.2",
     "react-native-reanimated": "^1.4.0",
     "react-native-typography": "^1.4.1",
-    "react-native-urbi-ui": "0.1.1",
+    "react-native-urbi-ui": "0.1.4",
     "react-native-vector-icons": "^6.6.0",
     "react-navigation": "^4.0.10",
     "react-navigation-stack": "^1.9.4",

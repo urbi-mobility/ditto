@@ -1,8 +1,9 @@
 import React from "react";
-import { Text, StyleSheet, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
 import { NavigationStackScreenProps } from "react-navigation-stack";
+import { i18n } from "src/i18n";
 import { emptyValidationFormData } from "src/models";
 
 const styles = StyleSheet.create({
@@ -27,7 +28,7 @@ const ValidationStartPage = (props: NavigationStackScreenProps) => {
         <Text style={styles.grow}>Some image too maybe?</Text>
         <ButtonRegular
           buttonStyle="primary"
-          label="Next"
+          label={i18n("next")}
           onPress={next(props)}
         />
       </SafeAreaView>

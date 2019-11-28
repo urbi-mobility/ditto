@@ -1,9 +1,11 @@
+import addYears from "date-fns/addYears";
+
 export type ValidationFormData = {
   nonce: string;
   firstName: string;
   lastName: string;
   nationality: string;
-  birthDate: string;
+  birthDate: Date;
   birthCountry: string;
   birthProvince: string;
   birthLocality: string;
@@ -35,7 +37,7 @@ export const emptyValidationFormData: ValidationFormData = {
   firstName: "",
   lastName: "",
   nationality: "",
-  birthDate: new Date().toISOString(),
+  birthDate: addYears(new Date(), -30),
   birthCountry: "",
   birthProvince: "",
   birthLocality: "",

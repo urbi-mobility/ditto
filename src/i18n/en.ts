@@ -16,7 +16,26 @@ export const translations = {
   help_whyBlockchainBody:
     "Blockchain blockchain blockchain blockchain, blockchain blockchain, blockchain blockchain blockchain!",
   help_anythingMissingTitle: "Anything missing?",
-  help_anythingMissingBody: "Send us an email, we won't respond!"
+  help_anythingMissingBody: "Send us an email, we won't respond!",
+  next: "Next",
+  verifiedDocuments: "Verified Documnets",
+  blockchainId: "Your identity on the blockchain",
+  drivingLicense: "Driving License",
+  keystorePassphrase: "Keystore passphrase",
+  contract: "Contract",
+  support: "Support",
+  contactUs: "Contact us",
+  deleteData: "Delete all user data",
+  personalInformation: "Personal Information",
+  firstName: "First name",
+  lastName: "Last name",
+  phoneNumber: "Phone number",
+  birthDate: "Date of birth",
+  birthCountry: "Country of birth",
+  dl_information: "Driving License Information",
+  dl_number: "Number",
+  dl_issueDate: "Issue Date",
+  dl_expiryDate: "Expiry Date"
 };
 
 export type Locale = typeof translations;

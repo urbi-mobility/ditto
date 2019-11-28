@@ -1,5 +1,9 @@
 import i18nJS from "i18n-js";
 import * as RNLocalize from "react-native-localize";
+import {
+  isSupportedLocale,
+  SupportedLocale
+} from "react-native-urbi-ui/components/form/DatePicker";
 import en, { Locale } from "src/i18n/en";
 import it from "src/i18n/it";
 
@@ -14,6 +18,9 @@ const { languageTag } =
 i18nJS.locale = languageTag;
 
 export const appLocale = i18nJS.locale;
+export const appLocaleShort: SupportedLocale = isSupportedLocale(appLocale)
+  ? appLocale
+  : "en";
 
 export const currency = (cents: number, unit: string) =>
   i18nJS.toCurrency(cents / 100, {

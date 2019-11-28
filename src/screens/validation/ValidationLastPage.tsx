@@ -2,6 +2,7 @@ import React from "react";
 import { colors } from "react-native-urbi-ui/utils/colors";
 import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
 import { ListItemTextInput } from "react-native-urbi-ui/components/form/ListItemTextInput";
+import { i18n } from "src/i18n";
 
 export const PersonalInfoFragment = () => {
   return (
@@ -12,30 +13,26 @@ export const PersonalInfoFragment = () => {
       />
       <ListItemTextInput
         name="firstName"
-        label="First name"
-        type="username"
-        error=""
+        label={i18n("firstName")}
+        type="text"
         focusable
       />
       <ListItemTextInput
         name="lastName"
-        label="Last name"
-        type="username"
-        error=""
+        label={i18n("lastName")}
+        type="text"
         focusable
       />
       <ListItemTextInput
         name="phoneNumber"
-        label="Phone number"
-        type="username"
-        error=""
+        label={i18n("phoneNumber")}
+        type="text"
         focusable
       />
       <ListItemTextInput
         name="birthCountry"
-        label="Birth country"
-        type="username"
-        error=""
+        label={i18n("birthCountry")}
+        type="text"
         focusable
       />
     </>

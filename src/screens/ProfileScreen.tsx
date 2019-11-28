@@ -1,17 +1,15 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { i18n } from "src/i18n";
+import { ScrollView, StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { ListItem } from "react-native-urbi-ui/components/ListItem";
 import { ListItemCompact } from "react-native-urbi-ui/components/ListItemCompact";
-import { Label } from "react-native-urbi-ui/molecules/content/Label";
 import { IconAndLabel } from "react-native-urbi-ui/molecules/content/IconAndLabel";
-import { Icon } from "react-native-urbi-ui/utils/const";
+import { Label } from "react-native-urbi-ui/molecules/content/Label";
 import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
-import { ScrollView } from "react-native";
 import { colors } from "react-native-urbi-ui/utils/colors";
-import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
+import { Icon } from "react-native-urbi-ui/utils/const";
 import { NavigationStackScreenProps } from "react-navigation-stack";
+import { i18n } from "src/i18n";
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
@@ -20,8 +18,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.ukko
   }
 });
-
-const textStyle = registeredTextStyle("title");
 
 const tapLicense = (props: NavigationStackScreenProps) => () => {
   props.navigation.navigate("ValidationStartPage");
@@ -39,28 +35,28 @@ export const ProfileScreen = (props: NavigationStackScreenProps) => (
   <SafeAreaView style={styles.wrapper}>
     <ScrollView style={styles.scrollview}>
       <SectionsDivider
-        label="Verified Documents"
+        label={i18n("verifiedDocuments")}
         backgroundColor={colors.ulisse}
       />
       <ListItem
         content={
           <IconAndLabel
             image={require("../../assets/license.png")}
-            label="Driving license"
+            label={i18n("drivingLicense")}
           />
         }
         end={<Icon name="disclosure-small" size={18} color={colors.primary} />}
         onPress={tapLicense(props)}
       />
       <SectionsDivider
-        label="Your identity on the blockchain"
+        label={i18n("blockchainId")}
         backgroundColor={colors.ulisse}
       />
       <ListItem
         content={
           <IconAndLabel
             image={require("../../assets/key.png")}
-            label="Keystore passphrase"
+            label={i18n("keystorePassphrase")}
           />
         }
         end={<Icon name="disclosure-small" size={18} color={colors.primary} />}
@@ -70,16 +66,19 @@ export const ProfileScreen = (props: NavigationStackScreenProps) => (
         content={
           <IconAndLabel
             image={require("../../assets/contract.png")}
-            label="Contract"
+            label={i18n("contract")}
           />
         }
         end={<Icon name="disclosure-small" size={18} color={colors.primary} />}
         onPress={tapContract}
       />
       <View style={styles.bottomView}>
-        <SectionsDivider label="Support" />
-        <ListItemCompact content={<Label text="Contact us" />} size={8} />
-        <ListItemCompact content={<Label text="Delete all user data" />} />
+        <SectionsDivider label={i18n("support")} />
+        <ListItemCompact
+          content={<Label text={i18n("contactUs")} />}
+          size={8}
+        />
+        <ListItemCompact content={<Label text={i18n("deleteData")} />} />
       </View>
     </ScrollView>
   </SafeAreaView>
