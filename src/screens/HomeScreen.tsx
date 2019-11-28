@@ -1,23 +1,23 @@
 import React from "react";
 import {
-  SafeAreaView,
+  ImageRequireSource,
+  ScrollView,
   StatusBar,
   StyleSheet,
-  ScrollView,
-  ImageRequireSource,
   Text,
   View
 } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
 import { Card } from "react-native-urbi-ui/components/Card";
 import {
-  CardHeaderProps,
-  CardHeader
+  CardHeader,
+  CardHeaderProps
 } from "react-native-urbi-ui/molecules/card/CardHeader";
 import { VehicleImg } from "react-native-urbi-ui/molecules/img/VehicleImg";
+import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
+import { colors } from "react-native-urbi-ui/utils/colors";
 import { showAlert } from "react-native-urbi-ui/utils/functions";
 import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
-import { colors } from "react-native-urbi-ui/utils/colors";
-import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
 import { i18n } from "src/i18n";
 
 type CardInfo = {
@@ -75,7 +75,7 @@ export const HomeScreen = () => (
   <>
     <StatusBar barStyle="dark-content" />
     <SafeAreaView style={styles.wrapper}>
-      <ScrollView style={styles.scrollview}>
+      <ScrollView>
         <View style={styles.intro}>
           <Text style={body}>{i18n("home_body")}</Text>
         </View>
@@ -104,6 +104,5 @@ HomeScreen.navigationOptions = {
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1, justifyContent: "flex-start" },
-  scrollview: { paddingTop: 20 },
   intro: { padding: 24 }
 });

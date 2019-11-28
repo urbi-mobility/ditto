@@ -8,7 +8,7 @@ import { Label } from "react-native-urbi-ui/molecules/content/Label";
 import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
 import { colors } from "react-native-urbi-ui/utils/colors";
 import { Icon } from "react-native-urbi-ui/utils/const";
-import { NavigationStackScreenProps } from "react-navigation-stack";
+import { StackProp } from "src/App";
 import { i18n } from "src/i18n";
 
 const styles = StyleSheet.create({
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const tapLicense = (props: NavigationStackScreenProps) => () => {
+const tapLicense = (props: StackProp<"ProfileHome">) => () => {
   props.navigation.navigate("ValidationStartPage");
 };
 
@@ -31,7 +31,7 @@ const tapContract = () => {
   console.log("contract");
 };
 
-export const ProfileScreen = (props: NavigationStackScreenProps) => (
+export const ProfileScreen = (props: StackProp<"ProfileHome">) => (
   <SafeAreaView style={styles.wrapper}>
     <ScrollView style={styles.scrollview}>
       <SectionsDivider
@@ -83,9 +83,3 @@ export const ProfileScreen = (props: NavigationStackScreenProps) => (
     </ScrollView>
   </SafeAreaView>
 );
-
-const name = ""; // TODO load it from local storage
-
-ProfileScreen.navigationOptions = {
-  headerTitle: i18n("navigation_profile", { name })
-};

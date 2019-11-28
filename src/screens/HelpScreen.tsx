@@ -1,21 +1,15 @@
+import _ from "lodash";
 import React, { useState } from "react";
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  View
-} from "react-native";
+import { StatusBar, StyleSheet, TextInput, View } from "react-native";
+import * as Keychain from "react-native-keychain";
+import SafeAreaView from "react-native-safe-area-view";
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
 import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
 import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
 import Accordion from "src/Accordion";
-import { generateNewKeystore } from "src/utils/cryptoUtils";
 import { i18n } from "src/i18n";
 import { Locale } from "src/i18n/en";
-import _ from "lodash";
-import * as Keychain from "react-native-keychain";
+import { generateNewKeystore } from "src/utils/cryptoUtils";
 
 const sectionIds = ["howDoesItWork", "whyBlockchain", "anythingMissing"];
 

@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
-import { NavigationStackScreenProps } from "react-navigation-stack";
+import { StackProp } from "src/App";
 import { i18n } from "src/i18n";
 import { emptyValidationFormData } from "src/models";
 
@@ -11,13 +11,13 @@ const styles = StyleSheet.create({
   grow: { flexGrow: 1 }
 });
 
-const next = (props: NavigationStackScreenProps) => () => {
+const next = (props: StackProp<"ValidationStartPage">) => () => {
   props.navigation.navigate("ValidationPersonalForm", {
     validationFormData: emptyValidationFormData
   });
 };
 
-const ValidationStartPage = (props: NavigationStackScreenProps) => {
+const ValidationStartPage = (props: StackProp<"ValidationStartPage">) => {
   return (
     <>
       <SafeAreaView style={styles.wrapper}>

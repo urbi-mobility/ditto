@@ -4,19 +4,17 @@ import React from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import * as Keychain from "react-native-keychain";
 import SafeAreaView from "react-native-safe-area-view";
+import { DatePicker } from "react-native-urbi-ui/components/form/DatePicker";
 import { ListItemTextInput } from "react-native-urbi-ui/components/form/ListItemTextInput";
 import UrbiForm, {
   UrbiFormProps
 } from "react-native-urbi-ui/components/form/UrbiForm";
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
-import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
-import { colors } from "react-native-urbi-ui/utils/colors";
-import { NavigationStackScreenProps } from "react-navigation-stack";
+import { StackProp } from "src/App";
+import { appLocaleShort, i18n } from "src/i18n";
 import { ValidationFormData } from "src/models";
 import { createKeystore, sign } from "src/utils/cryptoUtils";
 import { serializeToJson } from "src/utils/jsonUtils";
-import { DatePicker } from "react-native-urbi-ui/components/form/DatePicker";
-import { i18n, appLocaleShort } from "src/i18n";
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
@@ -29,16 +27,16 @@ type DrivingLicenseFormState = {
 };
 
 class ValidationDrivingLicenseForm extends React.PureComponent<
-  NavigationStackScreenProps,
+  StackProp<"ValidationDrivingLicenseForm">,
   DrivingLicenseFormState
 > {
-  constructor(props: NavigationStackScreenProps) {
+  constructor(props: StackProp<"ValidationDrivingLicenseForm">) {
     super(props);
     this.scrollView = React.createRef();
     this.renderForm = this.renderForm.bind(this);
     this.state = {
       scrollViewAnchor: 0,
-      validationFormData: this.props.navigation.getParam("validationFormData")
+      validationFormData: props.route.params.validationFormData
     };
   }
 
@@ -88,10 +86,6 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
         parentScrollView={this.scrollView}
         scrollViewAnchor={this.state.scrollViewAnchor}
       >
-        <SectionsDivider
-          label={i18n("dl_information")}
-          backgroundColor={colors.ulisse}
-        />
         <ListItemTextInput
           name="drivingLicense.number"
           label={i18n("dl_number")}

@@ -1,14 +1,8 @@
 import React from "react";
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle
-} from "react-native";
+import { StatusBar, StyleSheet, Text, View, ViewStyle } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
-import { NavigationStackScreenProps } from "react-navigation-stack";
+import { StackProp } from "src/App";
 
 const styles = StyleSheet.create({
   Wrapper: {
@@ -16,8 +10,8 @@ const styles = StyleSheet.create({
   } as ViewStyle
 });
 
-export const OnboardingScreen = (props: NavigationStackScreenProps) => {
-  const index = props.navigation.getParam("index");
+export const OnboardingScreen = (props: StackProp<"Onboarding">) => {
+  const index = props.route.params.index;
   const next = () =>
     props.navigation.navigate("Onboarding", { index: index + 1 });
 

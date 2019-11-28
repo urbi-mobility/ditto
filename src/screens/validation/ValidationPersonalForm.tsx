@@ -8,9 +8,7 @@ import UrbiForm, {
   UrbiFormProps
 } from "react-native-urbi-ui/components/form/UrbiForm";
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
-import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
-import { colors } from "react-native-urbi-ui/utils/colors";
-import { NavigationStackScreenProps } from "react-navigation-stack";
+import { StackProp } from "src/App";
 import { appLocaleShort, i18n } from "src/i18n";
 import { ValidationFormData } from "src/models";
 
@@ -25,16 +23,16 @@ type ValidationPersonalFormState = {
 };
 
 class ValidationPersonalForm extends React.PureComponent<
-  NavigationStackScreenProps,
+  StackProp<"ValidationPersonalForm">,
   ValidationPersonalFormState
 > {
-  constructor(props: NavigationStackScreenProps) {
+  constructor(props: StackProp<"ValidationPersonalForm">) {
     super(props);
     this.scrollView = React.createRef();
     this.renderForm = this.renderForm.bind(this);
     this.state = {
       scrollViewAnchor: 0,
-      validationFormData: this.props.navigation.getParam("validationFormData")
+      validationFormData: this.props.route.params.validationFormData
     };
   }
 
@@ -54,10 +52,6 @@ class ValidationPersonalForm extends React.PureComponent<
         parentScrollView={this.scrollView}
         scrollViewAnchor={this.state.scrollViewAnchor}
       >
-        <SectionsDivider
-          label={i18n("personalInformation")}
-          backgroundColor={colors.ulisse}
-        />
         <ListItemTextInput
           name="firstName"
           label={i18n("firstName")}
