@@ -6,6 +6,13 @@ export const translations: Locale = {
       time: "%-H:%M"
     }
   },
+  startValidationProcess: "Inizia validazione",
+  onboarding1title: "Una validazione, molte registrazioni",
+  onboarding1content: "Uno per tutti, tutti per uno",
+  onboarding2title: "Privato e sicuro",
+  onboarding2content: "Sì.",
+  onboarding3title: "Veloce e conveniente",
+  onboarding3content: "Ciaone",
   navigation_profile: "Ehi%{name}!",
   navigation_deals: "Offerte",
   navigation_faq: "FAQ",
@@ -22,7 +29,7 @@ export const translations: Locale = {
   next: "Avanti",
   verifiedDocuments: "Documenti verificati",
   blockchainId: "La tua identità sulla blockchain",
-  drivingLicense: "Driving License",
+  drivingLicense: "Patente di guida",
   keystorePassphrase: "Password del keystore",
   contract: "Contratto",
   support: "Supporto",

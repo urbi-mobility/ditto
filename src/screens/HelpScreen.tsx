@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-community/async-storage";
 import _ from "lodash";
 import React, { useState } from "react";
 import { StatusBar, StyleSheet, TextInput, View } from "react-native";
@@ -23,7 +24,7 @@ export const HelpScreen = () => {
   const [twelveWords, setTwelveWords] = useState("");
   const [address, setAddress] = useState("");
 
-  const onButtonPress = () => {
+  const onGeneratePress = () => {
     setLoading(true);
     requestAnimationFrame(async () => {
       const urbiKeyStore = await generateNewKeystore();
@@ -41,6 +42,8 @@ export const HelpScreen = () => {
     });
   };
 
+  const onResetPress = () => AsyncStorage.removeItem("onboarding");
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -51,8 +54,14 @@ export const HelpScreen = () => {
             buttonStyle="primary"
             style={styles.button}
             label="Generate a keystore!"
-            onPress={onButtonPress}
+            onPress={onGeneratePress}
             loading={loading}
+          />
+          <ButtonRegular
+            buttonStyle="brand"
+            style={styles.button}
+            label="Reset onboarding"
+            onPress={onResetPress}
           />
         </View>
         {twelveWords ? (
@@ -98,6 +107,6 @@ const styles = StyleSheet.create({
   wrapper: { flex: 1, justifyContent: "flex-start" },
   sections: { flexGrow: 0, flexShrink: 0 },
   withPadding: { flexGrow: 1, flexShrink: 0, padding: 20 },
-  buttonContainer: { height: 100, padding: 20 },
+  buttonContainer: { height: 200, padding: 20 },
   button: { marginTop: 20 }
 });

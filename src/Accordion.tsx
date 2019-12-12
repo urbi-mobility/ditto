@@ -58,16 +58,13 @@ export default class Accordion extends React.PureComponent<
   constructor(props: AccordionProps) {
     super(props);
     this.state = {
-      sections: props.sections.reduce(
-        (prev, _, i) => {
-          prev[i.toString()] = {
-            toggled: false,
-            rotation: new Animated.Value(1)
-          };
-          return prev;
-        },
-        {} as AccordionState["sections"]
-      )
+      sections: props.sections.reduce((prev, _, i) => {
+        prev[i.toString()] = {
+          toggled: false,
+          rotation: new Animated.Value(1)
+        };
+        return prev;
+      }, {} as AccordionState["sections"])
     };
     this.onSectionToggle = this.onSectionToggle.bind(this);
   }

@@ -4,6 +4,13 @@ export const translations = {
       time: "%-I:%M %p"
     }
   },
+  startValidationProcess: "Start validation process",
+  onboarding1title: "One validation, many registrations",
+  onboarding1content: "much money, wow.",
+  onboarding2title: "Private and safe",
+  onboarding2content: "Meaning, a lock box",
+  onboarding3title: "Fast and convenient",
+  onboarding3content: "Ciaone",
   navigation_profile: "Hey%{name}!",
   navigation_deals: "Deals",
   navigation_faq: "FAQ",
@@ -18,7 +25,7 @@ export const translations = {
   help_anythingMissingTitle: "Anything missing?",
   help_anythingMissingBody: "Send us an email, we won't respond!",
   next: "Next",
-  verifiedDocuments: "Verified Documnets",
+  verifiedDocuments: "Verified Documents",
   blockchainId: "Your identity on the blockchain",
   drivingLicense: "Driving License",
   keystorePassphrase: "Keystore passphrase",

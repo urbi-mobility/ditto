@@ -8,12 +8,13 @@ import { Label } from "react-native-urbi-ui/molecules/content/Label";
 import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
 import { colors } from "react-native-urbi-ui/utils/colors";
 import { Icon } from "react-native-urbi-ui/utils/const";
+import { onPressShowNotYet } from "react-native-urbi-ui/utils/functions";
 import { StackProp } from "src/App";
 import { i18n } from "src/i18n";
 
 const styles = StyleSheet.create({
-  wrapper: { flex: 1 },
-  scrollview: { padding: 0 },
+  wrapper: { flex: 1, backgroundColor: colors.ukko },
+  scrollview: { flex: 1 },
   bottomView: {
     backgroundColor: colors.ukko
   }
@@ -47,6 +48,7 @@ export const ProfileScreen = (props: StackProp<"ProfileHome">) => (
         }
         end={<Icon name="disclosure-small" size={18} color={colors.primary} />}
         onPress={tapLicense(props)}
+        backgroundColor={colors.ulisse}
       />
       <SectionsDivider
         label={i18n("blockchainId")}
@@ -61,6 +63,7 @@ export const ProfileScreen = (props: StackProp<"ProfileHome">) => (
         }
         end={<Icon name="disclosure-small" size={18} color={colors.primary} />}
         onPress={tapKeystore}
+        backgroundColor={colors.ulisse}
       />
       <ListItem
         content={
@@ -71,14 +74,20 @@ export const ProfileScreen = (props: StackProp<"ProfileHome">) => (
         }
         end={<Icon name="disclosure-small" size={18} color={colors.primary} />}
         onPress={tapContract}
+        backgroundColor={colors.ulisse}
       />
       <View style={styles.bottomView}>
         <SectionsDivider label={i18n("support")} />
         <ListItemCompact
           content={<Label text={i18n("contactUs")} />}
-          size={8}
+          onPress={onPressShowNotYet}
+          backgroundColor={colors.ukko}
         />
-        <ListItemCompact content={<Label text={i18n("deleteData")} />} />
+        <ListItemCompact
+          content={<Label text={i18n("deleteData")} />}
+          onPress={onPressShowNotYet}
+          backgroundColor={colors.ukko}
+        />
       </View>
     </ScrollView>
   </SafeAreaView>

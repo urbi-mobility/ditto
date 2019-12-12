@@ -835,6 +835,11 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
+"@react-native-community/async-storage@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.7.0.tgz#75e8795cfadef5005228fd1f8a0b0178d50924a2"
+  integrity sha512-6SdZhoS6ykkIPJeJkJ5pwxmRfdQbDILQxRlZLXVzsV0WA9wmcf7FutKXBEX9dlSPbYTbjo7L3xbXQkZXsMzZBA==
+
 "@react-native-community/cli-platform-android@^3.0.0-alpha.1", "@react-native-community/cli-platform-android@^3.0.0-alpha.7":
   version "3.0.0-alpha.7"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-platform-android/-/cli-platform-android-3.0.0-alpha.7.tgz#03c3671ab72b62a8742aa71b66cb8d594171891f"
@@ -6922,10 +6927,10 @@ react-native-safe-area-view@^1.0.0:
   dependencies:
     hoist-non-react-statics "^2.3.1"
 
-react-native-screens@^2.0.0-alpha.13:
-  version "2.0.0-alpha.13"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.0.0-alpha.13.tgz#eb3306b28c4b44230dda8da106ecd8c719b99cef"
-  integrity sha512-3ekad3ai3fIoxCw/NZA1fKtRi3q3xypfc2rpWpVRZJFUOAKDIZAXHsVt+b6eruxnVQ69kED3gkXRY2rmDDj6Zw==
+react-native-screens@2.0.0-alpha.9:
+  version "2.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.0.0-alpha.9.tgz#6e161553a7b6971d824b34dbd8b50c1763bc259c"
+  integrity sha512-aMGeHNS+ymmhuxUVogRN7pdIY8mhcHq59uJHvCdMZg5kRknuS8pRp/3Gq+1VfIOGKjaMWBjlWNSo0D0U8n1ZHg==
   dependencies:
     debounce "^1.2.0"
 
@@ -6934,10 +6939,10 @@ react-native-typography@^1.4.1:
   resolved "https://registry.yarnpkg.com/react-native-typography/-/react-native-typography-1.4.1.tgz#2d05cb5935a2f7fdb6b43bbde93d60f1324578e3"
   integrity sha512-dc9Zfs4jUdq4ygx4/KwO6jKTERBu6cRrfPJGntw/pA+D6BMjlWfMNuhZ/69vf4Zpsnt9s4AGe+Z/V1QFYaCXAA==
 
-react-native-urbi-ui@0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/react-native-urbi-ui/-/react-native-urbi-ui-0.1.4.tgz#434ce516dddb1e617969016e01b488e065a41e1a"
-  integrity sha512-TzFciQFG+x8wIBt0DNH6pnLpYsuJY8o04YpSFU7opT5zRtVF9RW7vqxWyzr+OTI+PfL1FKopuoF3yBRMqbueJA==
+react-native-urbi-ui@0.1.10:
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/react-native-urbi-ui/-/react-native-urbi-ui-0.1.10.tgz#53bcd111eefd4fed7cd77a86133f48bc9a6830a6"
+  integrity sha512-n/0X8sbe4paVSbaz/fk+YlPXkm+m2hHRWNUXghP8M/z2AlPmETjijbmuo5Cwwn8lp+c0wUJ4DQedkhFxBXhCtg==
 
 react-native-vector-icons@^6.6.0:
   version "6.6.0"

@@ -1,7 +1,8 @@
 import React from "react";
 import { StatusBar, StyleSheet, Text, View, ViewStyle } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
+import Onboarding from "react-native-urbi-ui/components/Onboarding";
+import { i18n } from "src/i18n";
 import { StackProp } from "src/App";
 
 const styles = StyleSheet.create({
@@ -10,24 +11,37 @@ const styles = StyleSheet.create({
   } as ViewStyle
 });
 
-export const OnboardingScreen = (props: StackProp<"Onboarding">) => {
-  const index = props.route.params.index;
-  const next = () =>
-    props.navigation.navigate("Onboarding", { index: index + 1 });
+const pages = [
+  {
+    title: i18n("onboarding1title"),
+    content: i18n("onboarding1content"),
+    image: require("../../assets/profile.png")
+  },
+  {
+    title: i18n("onboarding2title"),
+    content: i18n("onboarding2content"),
+    image: require("../../assets/ic_muving_scooter.png")
+  },
+  {
+    title: i18n("onboarding3title"),
+    content: i18n("onboarding3content"),
+    image: require("../../assets/license.png")
+  }
+];
 
+export const OnboardingScreen = (props: StackProp<"Onboarding">) => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.Wrapper}>
         <View style={styles.Wrapper}>
-          <Text style={styles.Wrapper}>{index ? `page ${index}` : "home"}</Text>
-          {index !== 2 && (
-            <ButtonRegular
-              buttonStyle="primary"
-              label="next page"
-              onPress={next}
-            />
-          )}
+          <Onboarding
+            cta={{
+              onPress: props.route.params.onDone,
+              label: i18n("startValidationProcess")
+            }}
+            pages={pages}
+          />
         </View>
       </SafeAreaView>
     </>
