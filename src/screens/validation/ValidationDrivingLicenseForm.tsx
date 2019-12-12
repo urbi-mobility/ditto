@@ -1,7 +1,7 @@
 import { Formik } from "formik";
 import _ from "lodash";
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, LayoutChangeEvent } from "react-native";
 import * as Keychain from "react-native-keychain";
 import SafeAreaView from "react-native-safe-area-view";
 import { DatePicker } from "react-native-urbi-ui/components/form/DatePicker";
@@ -18,7 +18,7 @@ import { serializeToJson } from "src/utils/jsonUtils";
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
-  button: { margin: 10 }
+  button: { margin: 30 }
 });
 
 type DrivingLicenseFormState = {
@@ -34,6 +34,7 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
     super(props);
     this.scrollView = React.createRef();
     this.renderForm = this.renderForm.bind(this);
+    this.onLayout = this.onLayout.bind(this);
     this.state = {
       scrollViewAnchor: 0,
       validationFormData: props.route.params.validationFormData
@@ -46,6 +47,10 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
     submitted.nonce = _.random(1000000, 100000000).toString();
     return submitted;
   };
+
+  onLayout(e: LayoutChangeEvent) {
+    this.setState({ scrollViewAnchor: e.nativeEvent.layout.y });
+  }
 
   loadKeyStore = async () => {
     const creds = await Keychain.getInternetCredentials("urbiKeyStore");
@@ -85,6 +90,7 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
         handleSubmit={p.handleSubmit}
         parentScrollView={this.scrollView}
         scrollViewAnchor={this.state.scrollViewAnchor}
+        autoScroll
       >
         <ListItemTextInput
           name="drivingLicense.number"
@@ -116,6 +122,7 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
         ref={this.scrollView}
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
+        onLayout={this.onLayout}
       >
         <Formik
           initialValues={this.state.validationFormData}

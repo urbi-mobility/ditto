@@ -4,13 +4,15 @@ export const translations = {
       time: "%-I:%M %p"
     }
   },
-  startValidationProcess: "Start validation process",
   onboarding1title: "One validation, many registrations",
   onboarding1content: "much money, wow.",
   onboarding2title: "Private and safe",
   onboarding2content: "Meaning, a lock box",
   onboarding3title: "Fast and convenient",
   onboarding3content: "Ciaone",
+  startValidationProcess: "I'm ready",
+  validationBody:
+    "Make sure you have your driving license at hand, you will have to fill in your data.\n\nOnce submitted, we'll verify your data with the Certification Authority and generate your blockchain contract.\n\nThe whole process takes around 5 minutes!",
   navigation_profile: "Hey%{name}!",
   navigation_deals: "Deals",
   navigation_faq: "FAQ",

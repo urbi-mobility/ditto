@@ -1,6 +1,6 @@
 import { Formik } from "formik";
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, LayoutChangeEvent } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { DatePicker } from "react-native-urbi-ui/components/form/DatePicker";
 import { ListItemTextInput } from "react-native-urbi-ui/components/form/ListItemTextInput";
@@ -11,10 +11,12 @@ import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegu
 import { StackProp } from "src/App";
 import { appLocaleShort, i18n } from "src/i18n";
 import { ValidationFormData } from "src/models";
+import { BOTTOM_PANEL_HEIGHT } from "react-native-urbi-ui/components/FloatingButtonLayout";
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
-  button: { margin: 10 }
+  button: { margin: 30 },
+  scrollview: { paddingBottom: BOTTOM_PANEL_HEIGHT + 20 }
 });
 
 type ValidationPersonalFormState = {
@@ -26,17 +28,22 @@ class ValidationPersonalForm extends React.PureComponent<
   StackProp<"ValidationPersonalForm">,
   ValidationPersonalFormState
 > {
+  private scrollView: React.RefObject<ScrollView>;
+
   constructor(props: StackProp<"ValidationPersonalForm">) {
     super(props);
     this.scrollView = React.createRef();
     this.renderForm = this.renderForm.bind(this);
+    this.onLayout = this.onLayout.bind(this);
     this.state = {
       scrollViewAnchor: 0,
       validationFormData: this.props.route.params.validationFormData
     };
   }
 
-  private scrollView: React.RefObject<ScrollView>;
+  onLayout(e: LayoutChangeEvent) {
+    this.setState({ scrollViewAnchor: e.nativeEvent.layout.y });
+  }
 
   submit = (submitted: ValidationFormData) => {
     this.props.navigation.navigate("ValidationDrivingLicenseForm", {
@@ -51,6 +58,7 @@ class ValidationPersonalForm extends React.PureComponent<
         handleSubmit={p.handleSubmit}
         parentScrollView={this.scrollView}
         scrollViewAnchor={this.state.scrollViewAnchor}
+        autoScroll
       >
         <ListItemTextInput
           name="firstName"
@@ -91,8 +99,11 @@ class ValidationPersonalForm extends React.PureComponent<
     <SafeAreaView style={styles.wrapper}>
       <ScrollView
         ref={this.scrollView}
+        style={styles.scrollview}
+        contentContainerStyle={styles.scrollview}
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
+        onLayout={this.onLayout}
       >
         <Formik
           initialValues={this.state.validationFormData}
@@ -101,8 +112,8 @@ class ValidationPersonalForm extends React.PureComponent<
           {this.renderForm}
         </Formik>
         <ButtonRegular
-          style={styles.button}
           buttonStyle="primary"
+          style={styles.button}
           label={i18n("next")}
           onPress={() => this.submit(this.state.validationFormData)}
         />

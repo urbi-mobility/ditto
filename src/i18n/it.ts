@@ -6,13 +6,15 @@ export const translations: Locale = {
       time: "%-H:%M"
     }
   },
-  startValidationProcess: "Inizia validazione",
   onboarding1title: "Una validazione, molte registrazioni",
   onboarding1content: "Uno per tutti, tutti per uno",
   onboarding2title: "Privato e sicuro",
   onboarding2content: "Sì.",
   onboarding3title: "Veloce e conveniente",
   onboarding3content: "Ciaone",
+  startValidationProcess: "Inizia",
+  validationBody:
+    "Assicurati di avere la tua patente di guida a portata di mano, dovrai inserire i tuoi dati.\n\nUna volta completato l'inserimento dei dati nel form, i dati verranno inviati alla Certification Authority per la verifica e il salvataggio sulla blockchain.\n\nL'intero processo richiede circa 5 minuti!",
   navigation_profile: "Ehi%{name}!",
   navigation_deals: "Offerte",
   navigation_faq: "FAQ",

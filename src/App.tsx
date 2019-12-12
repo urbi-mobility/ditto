@@ -156,7 +156,7 @@ class App extends React.Component<any, AppState> {
           {onboarding === "done" ? (
             <Tab.Navigator
               initialRouteName="Home"
-              tabBarOptions={{ showLabel: false }}
+              tabBarOptions={{ showLabel: false, keyboardHidesTabBar: true }}
             >
               <Tab.Screen
                 name="Profile"
