@@ -11,6 +11,7 @@ import Accordion from "src/Accordion";
 import { i18n } from "src/i18n";
 import { Locale } from "src/i18n/en";
 import { generateNewKeystore } from "src/utils/cryptoUtils";
+import { showLongAlert } from "react-native-urbi-ui/utils/functions";
 
 const sectionIds = ["howDoesItWork", "whyBlockchain", "anythingMissing"];
 
@@ -42,7 +43,10 @@ export const HelpScreen = () => {
     });
   };
 
-  const onResetPress = () => AsyncStorage.removeItem("onboarding");
+  const onResetPress = () => {
+    AsyncStorage.removeItem("onboarding");
+    showLongAlert("Reload the app to see the onboarding again!");
+  };
 
   return (
     <>

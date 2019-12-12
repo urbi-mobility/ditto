@@ -8,7 +8,7 @@ import {
 } from "@react-navigation/native-stack";
 import "node-libs-react-native/globals"; // comment to make debugging work
 import React from "react";
-import { Image } from "react-native";
+import { Image, YellowBox } from "react-native";
 import "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-view";
 import { enableScreens } from "react-native-screens";
@@ -29,6 +29,8 @@ import images from "src/utils/images";
 import "./globals";
 
 enableScreens();
+
+YellowBox.ignoreWarnings(["Require cycle"]);
 
 const tabIcon = (name: string) => ({ focused }: { focused: boolean }) => (
   <Image source={images[`${name}${focused ? "_focused" : ""}`]} />
