@@ -133,7 +133,7 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
         <ButtonRegular
           style={styles.button}
           buttonStyle="primary"
-          label={i18n("next")}
+          label={i18n("submit")}
           onPress={() => this.submit(this.state.validationFormData)}
         />
       </ScrollView>

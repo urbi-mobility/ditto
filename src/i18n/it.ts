@@ -29,6 +29,7 @@ export const translations: Locale = {
   help_anythingMissingTitle: "Manca qualcosa?",
   help_anythingMissingBody: "Mandaci un'email, non risponderemo!",
   next: "Avanti",
+  submit: "Invia",
   verifiedDocuments: "Documenti verificati",
   blockchainId: "La tua identità sulla blockchain",
   drivingLicense: "Patente di guida",

@@ -50,7 +50,6 @@ export const HelpScreen = () => {
 
   return (
     <>
-      <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.wrapper}>
         <Accordion sections={sections} />
         <View style={styles.buttonContainer}>

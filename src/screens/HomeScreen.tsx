@@ -19,6 +19,7 @@ import { colors } from "react-native-urbi-ui/utils/colors";
 import { showAlert } from "react-native-urbi-ui/utils/functions";
 import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
 import { i18n } from "src/i18n";
+import { onIOS } from "react-native-urbi-ui/utils/const";
 
 type CardInfo = {
   header: CardHeaderProps;
@@ -73,7 +74,7 @@ const onCardPress = (provider: string) => () =>
 
 export const HomeScreen = () => (
   <>
-    <StatusBar barStyle="dark-content" />
+    <StatusBar barStyle={`${onIOS ? "dark" : "light"}-content`} />
     <SafeAreaView style={styles.wrapper}>
       <ScrollView>
         <View style={styles.intro}>

@@ -27,6 +27,7 @@ export const translations = {
   help_anythingMissingTitle: "Anything missing?",
   help_anythingMissingBody: "Send us an email, we won't respond!",
   next: "Next",
+  submit: "Submit",
   verifiedDocuments: "Verified Documents",
   blockchainId: "Your identity on the blockchain",
   drivingLicense: "Driving License",

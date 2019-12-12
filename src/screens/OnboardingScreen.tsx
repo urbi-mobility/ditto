@@ -32,7 +32,6 @@ const pages = [
 export const OnboardingScreen = (props: StackProp<"Onboarding">) => {
   return (
     <>
-      <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.Wrapper}>
         <View style={styles.Wrapper}>
           <Onboarding
