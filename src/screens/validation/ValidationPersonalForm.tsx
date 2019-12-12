@@ -35,6 +35,7 @@ class ValidationPersonalForm extends React.PureComponent<
     this.scrollView = React.createRef();
     this.renderForm = this.renderForm.bind(this);
     this.onLayout = this.onLayout.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
     this.state = {
       scrollViewAnchor: 0,
       validationFormData: this.props.route.params.validationFormData
@@ -45,11 +46,11 @@ class ValidationPersonalForm extends React.PureComponent<
     this.setState({ scrollViewAnchor: e.nativeEvent.layout.y });
   }
 
-  submit = (submitted: ValidationFormData) => {
+  onSubmit(values: ValidationFormData) {
     this.props.navigation.navigate("ValidationDrivingLicenseForm", {
-      validationFormData: submitted
+      validationFormData: values
     });
-  };
+  }
 
   renderForm(p: UrbiFormProps) {
     return (
@@ -91,6 +92,12 @@ class ValidationPersonalForm extends React.PureComponent<
           type="text"
           focusable
         />
+        <ButtonRegular
+          buttonStyle="primary"
+          style={styles.button}
+          label={i18n("next")}
+          onPress={p.handleSubmit}
+        />
       </UrbiForm>
     );
   }
@@ -107,16 +114,10 @@ class ValidationPersonalForm extends React.PureComponent<
       >
         <Formik
           initialValues={this.state.validationFormData}
-          onSubmit={this.submit}
+          onSubmit={this.onSubmit}
         >
           {this.renderForm}
         </Formik>
-        <ButtonRegular
-          buttonStyle="primary"
-          style={styles.button}
-          label={i18n("next")}
-          onPress={() => this.submit(this.state.validationFormData)}
-        />
       </ScrollView>
     </SafeAreaView>
   );

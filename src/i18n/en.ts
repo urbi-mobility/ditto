@@ -46,7 +46,11 @@ export const translations = {
   dl_information: "Driving License",
   dl_number: "Number",
   dl_issueDate: "Issue Date",
-  dl_expiryDate: "Expiry Date"
+  dl_expiryDate: "Expiry Date",
+  loading: "Loading...",
+  generatingKeystore: "Generating keystore...",
+  recoveringKeystore: "Recovering keystore...",
+  contactingCA: "Contacting Certification Authority..."
 };
 
 export type Locale = typeof translations;

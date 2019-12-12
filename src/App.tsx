@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/core";
 import { NavigationNativeContainer } from "@react-navigation/native";
 import {
@@ -22,6 +23,7 @@ import { HomeScreen } from "src/screens/HomeScreen";
 import { OnboardingScreen } from "src/screens/OnboardingScreen";
 import { ProfileScreen } from "src/screens/ProfileScreen";
 import { SplashScreen } from "src/screens/SplashScreen";
+import { LoadingOverlay } from "src/utils/LoadingOverlay";
 import ValidationDrivingLicenseForm from "src/screens/validation/ValidationDrivingLicenseForm";
 import ValidationPersonalForm from "src/screens/validation/ValidationPersonalForm";
 import ValidationStartPage from "src/screens/validation/ValidationStartPage";
@@ -36,7 +38,17 @@ const tabIcon = (name: string) => ({ focused }: { focused: boolean }) => (
   <Image source={images[`${name}${focused ? "_focused" : ""}`]} />
 );
 
+type RootRoutes = {
+  Main: undefined;
+  Loading: { label: string };
+};
+
+export type RootStackProp<T extends keyof RootRoutes> = {
+  route: RouteProp<RootRoutes, T>;
+};
+
 export type Routes = {
+  Loading: RootRoutes["Loading"];
   Home: undefined;
   ProfileHome: undefined;
   HelpHome: undefined;
@@ -53,9 +65,8 @@ export type StackProp<T extends keyof Routes> = {
 };
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator<Routes>();
-
-const userName = ""; // TODO read from local storage
+const NativeStack = createNativeStackNavigator<Routes>();
+const Stack = createStackNavigator<RootRoutes>();
 
 const stackStyle = {
   headerLargeTitle: true,
@@ -76,51 +87,79 @@ const splashStyle = {
 };
 
 const ProfileTab = () => (
-  <Stack.Navigator screenOptions={stackStyle} initialRouteName="ProfileHome">
-    <Stack.Screen
+  <NativeStack.Navigator
+    screenOptions={stackStyle}
+    initialRouteName="ProfileHome"
+  >
+    <NativeStack.Screen
       name="ProfileHome"
       component={ProfileScreen}
       options={() => ({
-        title: i18n("navigation_profile", { name: userName })
+        title: i18n("navigation_profile", { name: "" })
       })}
     />
-    <Stack.Screen
+    <NativeStack.Screen
       name="ValidationStartPage"
       component={ValidationStartPage}
       options={{ title: i18n("beforeStarting") }}
     />
-    <Stack.Screen
+    <NativeStack.Screen
       name="ValidationPersonalForm"
       component={ValidationPersonalForm}
       initialParams={{ validationFormData: emptyValidationFormData }}
       options={{ title: i18n("personalInformation") }}
     />
-    <Stack.Screen
+    <NativeStack.Screen
       name="ValidationDrivingLicenseForm"
       component={ValidationDrivingLicenseForm}
       options={{ title: i18n("dl_information") }}
     />
-  </Stack.Navigator>
+  </NativeStack.Navigator>
 );
 
 const HomeTab = () => (
-  <Stack.Navigator screenOptions={stackStyle} initialRouteName="Home">
-    <Stack.Screen
+  <NativeStack.Navigator screenOptions={stackStyle} initialRouteName="Home">
+    <NativeStack.Screen
       name="Home"
       component={HomeScreen}
       options={{ title: i18n("navigation_deals") }}
     />
-  </Stack.Navigator>
+  </NativeStack.Navigator>
 );
 
 const HelpTab = () => (
-  <Stack.Navigator screenOptions={stackStyle} initialRouteName="HelpHome">
-    <Stack.Screen
+  <NativeStack.Navigator screenOptions={stackStyle} initialRouteName="HelpHome">
+    <NativeStack.Screen
       name="HelpHome"
       component={HelpScreen}
       options={{ title: i18n("navigation_faq") }}
     />
-  </Stack.Navigator>
+  </NativeStack.Navigator>
+);
+
+const Tabs = () => (
+  <Tab.Navigator
+    initialRouteName="Home"
+    tabBarOptions={{ showLabel: false, keyboardHidesTabBar: true }}
+  >
+    <Tab.Screen
+      name="Profile"
+      component={ProfileTab}
+      options={{
+        tabBarIcon: tabIcon("profile")
+      }}
+    />
+    <Tab.Screen
+      name="Home"
+      component={HomeTab}
+      options={{ tabBarIcon: tabIcon("home") }}
+    />
+    <Tab.Screen
+      name="Help"
+      component={HelpTab}
+      options={{ tabBarIcon: tabIcon("help") }}
+    />
+  </Tab.Navigator>
 );
 
 type AppState = {
@@ -154,40 +193,34 @@ class App extends React.Component<any, AppState> {
       <SafeAreaProvider>
         <NavigationNativeContainer>
           {onboarding === "done" ? (
-            <Tab.Navigator
-              initialRouteName="Home"
-              tabBarOptions={{ showLabel: false, keyboardHidesTabBar: true }}
+            <Stack.Navigator
+              mode="modal"
+              headerMode="none"
+              screenOptions={{ cardTransparent: true, gestureEnabled: false }}
             >
-              <Tab.Screen
-                name="Profile"
-                component={ProfileTab}
-                options={{
-                  tabBarIcon: tabIcon("profile")
-                }}
+              <Stack.Screen
+                name="Main"
+                component={Tabs}
+                options={{ headerShown: false }}
               />
-              <Tab.Screen
-                name="Home"
-                component={HomeTab}
-                options={{ tabBarIcon: tabIcon("home") }}
+              <Stack.Screen
+                name="Loading"
+                component={LoadingOverlay}
+                initialParams={{ label: i18n("loading") }}
               />
-              <Tab.Screen
-                name="Help"
-                component={HelpTab}
-                options={{ tabBarIcon: tabIcon("help") }}
-              />
-            </Tab.Navigator>
+            </Stack.Navigator>
           ) : (
-            <Stack.Navigator screenOptions={splashStyle}>
+            <NativeStack.Navigator screenOptions={splashStyle}>
               {onboarding === "unknown" ? (
-                <Stack.Screen name="Splash" component={SplashScreen} />
+                <NativeStack.Screen name="Splash" component={SplashScreen} />
               ) : (
-                <Stack.Screen
+                <NativeStack.Screen
                   name="Onboarding"
                   component={OnboardingScreen}
                   initialParams={{ onDone: this.onOnboardingDone }}
                 />
               )}
-            </Stack.Navigator>
+            </NativeStack.Navigator>
           )}
         </NavigationNativeContainer>
       </SafeAreaProvider>

@@ -48,7 +48,11 @@ export const translations: Locale = {
   dl_information: "Patente di guida",
   dl_number: "Numero",
   dl_issueDate: "Rilasciata il",
-  dl_expiryDate: "Scade il"
+  dl_expiryDate: "Scade il",
+  loading: "Caricamento...",
+  generatingKeystore: "Genero keystore...",
+  recoveringKeystore: "Carico keystore...",
+  contactingCA: "Contatto Certification Authority..."
 };
 
 export default translations;

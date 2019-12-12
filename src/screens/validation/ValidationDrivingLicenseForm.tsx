@@ -1,8 +1,8 @@
 import { Formik } from "formik";
 import _ from "lodash";
 import React from "react";
-import { ScrollView, StyleSheet, LayoutChangeEvent } from "react-native";
-import * as Keychain from "react-native-keychain";
+import { LayoutChangeEvent, ScrollView, StyleSheet } from "react-native";
+import fetch from "react-native-fetch-polyfill";
 import SafeAreaView from "react-native-safe-area-view";
 import { DatePicker } from "react-native-urbi-ui/components/form/DatePicker";
 import { ListItemTextInput } from "react-native-urbi-ui/components/form/ListItemTextInput";
@@ -13,8 +13,14 @@ import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegu
 import { StackProp } from "src/App";
 import { appLocaleShort, i18n } from "src/i18n";
 import { ValidationFormData } from "src/models";
-import { createKeystore, sign } from "src/utils/cryptoUtils";
+import {
+  createKeystore,
+  generateNewKeystore,
+  sign,
+  UrbiKeyStore
+} from "src/utils/cryptoUtils";
 import { serializeToJson } from "src/utils/jsonUtils";
+import SecureStore from "src/utils/SecureStore";
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
@@ -35,10 +41,18 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
     this.scrollView = React.createRef();
     this.renderForm = this.renderForm.bind(this);
     this.onLayout = this.onLayout.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
     this.state = {
       scrollViewAnchor: 0,
       validationFormData: props.route.params.validationFormData
     };
+  }
+
+  componentDidMount() {
+    this.setState({
+      validationFormData: this.props.route.params.validationFormData
+    });
+    console.log(this.props.route.params.validationFormData);
   }
 
   private scrollView: React.RefObject<ScrollView>;
@@ -52,18 +66,48 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
     this.setState({ scrollViewAnchor: e.nativeEvent.layout.y });
   }
 
-  loadKeyStore = async () => {
-    const creds = await Keychain.getInternetCredentials("urbiKeyStore");
-    const keyStore = JSON.parse(creds.password);
-    return await createKeystore(keyStore.mnemonic, keyStore.password);
-  };
+  async loadKeyStore(
+    navigation: StackProp<"ValidationDrivingLicenseForm">["navigation"]
+  ) {
+    const creds = await SecureStore.getItemAsync("keyStore");
+    let keystore: UrbiKeyStore;
 
-  submit = async (submitted: ValidationFormData) => {
+    if (creds) {
+      const parsed = JSON.parse(creds);
+      navigation.navigate("Loading", {
+        label: i18n("recoveringKeystore")
+      });
+      keystore = await createKeystore(parsed.mnemonic, parsed.password);
+    } else {
+      navigation.navigate("Loading", {
+        label: i18n("generatingKeystore")
+      });
+      keystore = await generateNewKeystore();
+
+      SecureStore.setItemAsync(
+        "keystore",
+        JSON.stringify(_.pick(keystore, ["password", "mnemonic", "address"]))
+      );
+    }
+    return keystore;
+  }
+
+  async onSubmit(submitted: ValidationFormData) {
+    const { navigation } = this.props;
     console.log(submitted);
-    const keyStore = await this.loadKeyStore();
+
+    const keyStore = await this.loadKeyStore(navigation);
     const sortedAndSerialized = serializeToJson(this.withNonce(submitted));
+
+    await SecureStore.setItemAsync("user", sortedAndSerialized);
+
+    navigation.navigate("Loading", {
+      label: i18n("contactingCA")
+    });
+
     fetch("http://192.168.2.167:8080/validate", {
       method: "POST",
+      timeout: 25000,
       headers: {
         "Content-Type": "application/json"
       },
@@ -80,8 +124,14 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
       .catch(r => {
         console.log("Error?");
         console.error(r);
+      })
+      .finally(() => {
+        console.log("Finally");
+        navigation.navigate("ValidationDrivingLicenseForm", {
+          validationFormData: submitted
+        });
       });
-  };
+  }
 
   renderForm(p: UrbiFormProps) {
     return (
@@ -112,6 +162,12 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
           locale={appLocaleShort}
           focusable
         />
+        <ButtonRegular
+          style={styles.button}
+          buttonStyle="primary"
+          label={i18n("submit")}
+          onPress={p.handleSubmit}
+        />
       </UrbiForm>
     );
   }
@@ -126,16 +182,10 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
       >
         <Formik
           initialValues={this.state.validationFormData}
-          onSubmit={this.submit}
+          onSubmit={this.onSubmit}
         >
           {this.renderForm}
         </Formik>
-        <ButtonRegular
-          style={styles.button}
-          buttonStyle="primary"
-          label={i18n("submit")}
-          onPress={() => this.submit(this.state.validationFormData)}
-        />
       </ScrollView>
     </SafeAreaView>
   );
