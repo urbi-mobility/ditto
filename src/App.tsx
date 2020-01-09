@@ -2,13 +2,16 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/core";
-import { NavigationNativeContainer } from "@react-navigation/native";
+import {
+  NavigationNativeContainer,
+  useLinking
+} from "@react-navigation/native";
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp
 } from "@react-navigation/native-stack";
 import "node-libs-react-native/globals"; // comment to make debugging work
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, YellowBox } from "react-native";
 import "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-view";
@@ -18,6 +21,7 @@ import { onIOS } from "react-native-urbi-ui/utils/const";
 import { textStyle } from "react-native-urbi-ui/utils/textStyles";
 import { i18n } from "src/i18n";
 import { emptyValidationFormData, ValidationFormData } from "src/models";
+import { ConsentScreen } from "src/screens/ConsentScreen";
 import { HelpScreen } from "src/screens/HelpScreen";
 import { HomeScreen } from "src/screens/HomeScreen";
 import { OnboardingScreen } from "src/screens/OnboardingScreen";
@@ -41,6 +45,12 @@ const tabIcon = (name: string) => ({ focused }: { focused: boolean }) => (
 type RootRoutes = {
   Main: undefined;
   Loading: { label: string };
+  Consent: {
+    provider: string;
+    callbackUrl: string;
+    challenge?: string;
+    fields?: string[];
+  };
 };
 
 export type RootStackProp<T extends keyof RootRoutes> = {
@@ -49,6 +59,7 @@ export type RootStackProp<T extends keyof RootRoutes> = {
 
 export type Routes = {
   Loading: RootRoutes["Loading"];
+  Consent: RootRoutes["Consent"];
   Home: undefined;
   ProfileHome: undefined;
   HelpHome: undefined;
@@ -166,66 +177,92 @@ type AppState = {
   onboarding: "done" | "todo" | "unknown";
 };
 
-class App extends React.Component<any, AppState> {
-  constructor(props: any) {
-    super(props);
-    this.state = { onboarding: "unknown" };
-    this.onOnboardingDone = this.onOnboardingDone.bind(this);
-  }
+const App = () => {
+  const ref = useRef();
 
-  componentDidMount() {
+  const { getInitialState } = useLinking(ref, {
+    prefixes: ["ditto://"],
+    config: {
+      Consent: {
+        path: "consent/:provider/:callbackUrl",
+        parse: {
+          provider: v => decodeURIComponent(v),
+          callbackUrl: v => decodeURIComponent(v),
+          fields: f => f.split(",").map(v => decodeURIComponent(v))
+        }
+      }
+    }
+  });
+
+  const [onboarding, setOnboarding] = useState(
+    "unknown" as AppState["onboarding"]
+  );
+  const [isReady, setIsReady] = useState(false);
+  const [initialState, setInitialState] = useState();
+
+  useEffect(() => {
     AsyncStorage.getItem("onboarding").then(value =>
-      setTimeout(
-        () => this.setState({ onboarding: value === "done" ? "done" : "todo" }),
-        1000
-      )
+      setTimeout(() => setOnboarding(value === "done" ? "done" : "todo"), 1000)
     );
-  }
+  }, []);
 
-  onOnboardingDone() {
+  useEffect(() => {
+    getInitialState()
+      .catch(() => {})
+      .then(state => {
+        if (state) {
+          setInitialState(state);
+        }
+        setIsReady(true);
+      });
+  }, [getInitialState]);
+
+  const onOnboardingDone = () => {
     AsyncStorage.setItem("onboarding", "done");
-    this.setState({ onboarding: "done" });
-  }
+    setOnboarding("done");
+  };
 
-  render() {
-    const { onboarding } = this.state;
-    return (
-      <SafeAreaProvider>
-        <NavigationNativeContainer>
-          {onboarding === "done" ? (
-            <Stack.Navigator
-              mode="modal"
-              headerMode="none"
-              screenOptions={{ cardTransparent: true, gestureEnabled: false }}
-            >
-              <Stack.Screen
-                name="Main"
-                component={Tabs}
-                options={{ headerShown: false }}
+  return isReady ? (
+    <SafeAreaProvider>
+      <NavigationNativeContainer initialState={initialState} ref={ref}>
+        {onboarding === "done" ? (
+          <Stack.Navigator
+            mode="modal"
+            headerMode="none"
+            screenOptions={{ cardTransparent: true, gestureEnabled: false }}
+          >
+            <Stack.Screen
+              name="Main"
+              component={Tabs}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Loading"
+              component={LoadingOverlay}
+              initialParams={{ label: i18n("loading") }}
+            />
+            <Stack.Screen
+              name="Consent"
+              component={ConsentScreen}
+              initialParams={{ provider: "", callbackUrl: "" }}
+            />
+          </Stack.Navigator>
+        ) : (
+          <NativeStack.Navigator screenOptions={splashStyle}>
+            {onboarding === "unknown" ? (
+              <NativeStack.Screen name="Splash" component={SplashScreen} />
+            ) : (
+              <NativeStack.Screen
+                name="Onboarding"
+                component={OnboardingScreen}
+                initialParams={{ onDone: onOnboardingDone }}
               />
-              <Stack.Screen
-                name="Loading"
-                component={LoadingOverlay}
-                initialParams={{ label: i18n("loading") }}
-              />
-            </Stack.Navigator>
-          ) : (
-            <NativeStack.Navigator screenOptions={splashStyle}>
-              {onboarding === "unknown" ? (
-                <NativeStack.Screen name="Splash" component={SplashScreen} />
-              ) : (
-                <NativeStack.Screen
-                  name="Onboarding"
-                  component={OnboardingScreen}
-                  initialParams={{ onDone: this.onOnboardingDone }}
-                />
-              )}
-            </NativeStack.Navigator>
-          )}
-        </NavigationNativeContainer>
-      </SafeAreaProvider>
-    );
-  }
-}
+            )}
+          </NativeStack.Navigator>
+        )}
+      </NavigationNativeContainer>
+    </SafeAreaProvider>
+  ) : null;
+};
 
 export default App;

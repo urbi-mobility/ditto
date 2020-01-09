@@ -6844,6 +6844,11 @@ react-native-crypto@^2.0.1, react-native-crypto@^2.1.2:
     public-encrypt "^4.0.0"
     randomfill "^1.0.3"
 
+react-native-device-info@^5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-5.4.0.tgz#c837afdfc7947eef0a09c1bf2f3beb127d31458b"
+  integrity sha512-57IZQ7IavRlNZvI1cKypMkjRPa7nmLK6jYVSrvPMYX2VrCszmgJKlP90cZZaX0FObtNt1yYuKAOkBqyjkNrTIA==
+
 react-native-dialogs@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-native-dialogs/-/react-native-dialogs-1.1.0.tgz#8f7ee7f9d96574fc878fb7c1be101611fb4af517"
@@ -6949,10 +6954,10 @@ react-native-typography@^1.4.1:
   resolved "https://registry.yarnpkg.com/react-native-typography/-/react-native-typography-1.4.1.tgz#2d05cb5935a2f7fdb6b43bbde93d60f1324578e3"
   integrity sha512-dc9Zfs4jUdq4ygx4/KwO6jKTERBu6cRrfPJGntw/pA+D6BMjlWfMNuhZ/69vf4Zpsnt9s4AGe+Z/V1QFYaCXAA==
 
-react-native-urbi-ui@0.1.10:
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/react-native-urbi-ui/-/react-native-urbi-ui-0.1.10.tgz#53bcd111eefd4fed7cd77a86133f48bc9a6830a6"
-  integrity sha512-n/0X8sbe4paVSbaz/fk+YlPXkm+m2hHRWNUXghP8M/z2AlPmETjijbmuo5Cwwn8lp+c0wUJ4DQedkhFxBXhCtg==
+react-native-urbi-ui@0.1.19:
+  version "0.1.19"
+  resolved "https://registry.yarnpkg.com/react-native-urbi-ui/-/react-native-urbi-ui-0.1.19.tgz#0ffbbafdd14f69415aaffd2044ad94c846cdb372"
+  integrity sha512-eAlB/jdQJKFq+ZPjeKowI4Y0xaCh+LzsCRuQCnnRc0n/8yUFl17hQ9RKsjBm1mUY77G7EJk+7/82McTMjPfsWA==
 
 react-native-vector-icons@^6.6.0:
   version "6.6.0"
