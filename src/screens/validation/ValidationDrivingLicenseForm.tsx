@@ -1,3 +1,4 @@
+import { differenceInSeconds } from "date-fns";
 import { Formik } from "formik";
 import _ from "lodash";
 import React from "react";
@@ -105,6 +106,7 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
       label: i18n("contactingCA")
     });
 
+    const started = new Date();
     fetch("http://192.168.2.167:8080/validate", {
       method: "POST",
       timeout: 25000,
@@ -117,19 +119,27 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
         payload: submitted
       })
     })
-      .then(r => {
+      .then(async r => {
         console.log("Done?");
-        console.log(r.json());
+        const response = await r.json();
+        console.log(response);
       })
       .catch(r => {
         console.log("Error?");
-        console.error(r);
+        console.log(r);
       })
       .finally(() => {
         console.log("Finally");
-        navigation.navigate("ValidationDrivingLicenseForm", {
-          validationFormData: submitted
-        });
+        const hideLoadingOverlay = () =>
+          navigation.navigate("ValidationDrivingLicenseForm", {
+            validationFormData: submitted
+          });
+
+        if (differenceInSeconds(started, new Date()) < 2) {
+          setTimeout(hideLoadingOverlay, 2000);
+        } else {
+          hideLoadingOverlay();
+        }
       });
   }
 

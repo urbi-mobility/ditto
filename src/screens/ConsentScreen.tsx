@@ -19,6 +19,7 @@ import { RootStackProp } from "src/App";
 import { i18n } from "src/i18n";
 import { SplashScreen } from "src/screens/SplashScreen";
 import SecureStore from "src/utils/SecureStore";
+import { UrbiKeyStore, createKeystore, sign } from "src/utils/cryptoUtils";
 
 const styles = StyleSheet.create({
   Wrapper: {
@@ -60,6 +61,18 @@ const providerNames: { [provider: string]: string } = {
 
 const gradientColors = [colors.zeroAlphaUlisse, colors.ulisse];
 
+const loadKeyStore = async () => {
+  const creds = await SecureStore.getItemAsync("keyStore");
+  let keystore: UrbiKeyStore | undefined;
+
+  if (creds) {
+    const parsed = JSON.parse(creds);
+    keystore = await createKeystore(parsed.mnemonic, parsed.password);
+  }
+
+  return keystore;
+};
+
 const openApp = (
   provider: string,
   callbackUrl: string,
@@ -68,9 +81,18 @@ const openApp = (
   challenge?: string
 ) => async () => {
   try {
-    await Linking.openURL(
-      `${callbackUrl}?consent=${consent}&payload=${payload}${challenge || ""}`
-    );
+    let challengeResponse = "";
+    if (challenge) {
+      const keystore = await loadKeyStore();
+      if (keystore) {
+        challengeResponse = encodeURIComponent(sign(keystore, challenge));
+      }
+    }
+    const url = `${callbackUrl}?consent=${consent}&payload=${payload}${
+      challengeResponse ? `&response=${challengeResponse}` : ""
+    }`;
+    console.log(`callback deep link: ${url}`);
+    await Linking.openURL(url);
   } catch (err) {
     Alert.alert(
       i18n("somethingWentWrong"),
@@ -109,13 +131,6 @@ const ConsentScreenUnmemoized = (props: RootStackProp<"Consent">) => {
       <Text style={styles.Message}>
         {i18n("consentMessage", { providerName })}
       </Text>
-
-      {/* <Text>
-        provider: {props.route.params.provider}, callback:{" "}
-        {props.route.params.callbackUrl}, challenge:{" "}
-        {props.route.params.challenge}, fields:{" "}
-        {props.route.params.fields?.join(", ")}
-      </Text> */}
 
       <View style={styles.BottomPanel}>
         <LinearGradient colors={gradientColors} style={styles.ButtonsContainer}>
