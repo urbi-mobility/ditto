@@ -56,7 +56,14 @@ export const translations: Locale = {
   consentMessage:
     "%{providerName} vuole accedere ai tuoi dati per completare il processo di registrazione.\n\nVuoi permettere a %{providerName} di accedere ai tuoi dati?",
   notNow: "Non ora",
-  allow: "Consenti"
+  allow: "Consenti",
+  cancel: "Annulla",
+  ok: "OK",
+  overwriteKeystoreWarningTitle: "Sovrascrittura Keystore",
+  overwriteKeystoreWarningText:
+    "Hai già un keystore memorizzato. Non è consigliata la sovrascrittura.",
+  somethingWentWrong: "Errore",
+  consentCallbackFailed: "Impossibile aprire %{providerName}"
 };
 
 export default translations;

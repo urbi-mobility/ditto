@@ -59,7 +59,9 @@ export const translations = {
   ok: "OK",
   overwriteKeystoreWarningTitle: "Keystore Overwrite",
   overwriteKeystoreWarningText:
-    "You already have a keystore on this device. Overwriting it is not recommended."
+    "You already have a keystore on this device. Overwriting it is not recommended.",
+  somethingWentWrong: "Something went wrong",
+  consentCallbackFailed: "Couldn't open %{providerName}"
 };
 
 export type Locale = typeof translations;

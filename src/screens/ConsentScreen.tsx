@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Image,
   ImageRequireSource,
   Linking,
@@ -17,6 +18,7 @@ import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
 import { RootStackProp } from "src/App";
 import { i18n } from "src/i18n";
 import { SplashScreen } from "src/screens/SplashScreen";
+import SecureStore from "src/utils/SecureStore";
 
 const styles = StyleSheet.create({
   Wrapper: {
@@ -59,16 +61,38 @@ const providerNames: { [provider: string]: string } = {
 const gradientColors = [colors.zeroAlphaUlisse, colors.ulisse];
 
 const openApp = (
+  provider: string,
   callbackUrl: string,
   consent: boolean,
   payload?: string,
   challenge?: string
-) => () => Linking.openURL(`${callbackUrl}?consent=${consent}`);
+) => async () => {
+  try {
+    await Linking.openURL(
+      `${callbackUrl}?consent=${consent}&payload=${payload}${challenge || ""}`
+    );
+  } catch (err) {
+    Alert.alert(
+      i18n("somethingWentWrong"),
+      i18n("consentCallbackFailed", { providerName: provider })
+    );
+  }
+};
+
+const onAccept = (
+  provider: string,
+  callbackUrl: string,
+  challenge?: string
+) => async () => {
+  const data = await SecureStore.getItemAsync("user");
+  openApp(provider, callbackUrl, true, data, challenge)();
+};
 
 const ConsentScreenUnmemoized = (props: RootStackProp<"Consent">) => {
   const [showSplash, setShowSplash] = useState(true);
   const { params } = props.route;
   const provider = params.provider ?? "default";
+  const providerName = providerNames[provider] ?? provider;
 
   useEffect(() => {
     setTimeout(() => setShowSplash(false), 1000);
@@ -83,9 +107,7 @@ const ConsentScreenUnmemoized = (props: RootStackProp<"Consent">) => {
         source={providerImages[provider] ?? providerImages.default}
       />
       <Text style={styles.Message}>
-        {i18n("consentMessage", {
-          providerName: providerNames[provider] ?? provider
-        })}
+        {i18n("consentMessage", { providerName })}
       </Text>
 
       {/* <Text>
@@ -102,14 +124,18 @@ const ConsentScreenUnmemoized = (props: RootStackProp<"Consent">) => {
               <ButtonCompact
                 buttonStyle="default"
                 label={i18n("notNow")}
-                onPress={openApp(params.callbackUrl, false)}
+                onPress={openApp(providerName, params.callbackUrl, false)}
               />
             }
             right={
               <ButtonCompact
                 buttonStyle="primary"
                 label={i18n("allow")}
-                onPress={openApp(params.callbackUrl, true)}
+                onPress={onAccept(
+                  providerName,
+                  params.callbackUrl,
+                  params.challenge
+                )}
               />
             }
           />
