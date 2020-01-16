@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import _ from "lodash";
 import React, { useState } from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, ScrollView, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
 import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
@@ -31,18 +31,23 @@ export const HelpScreen = (props: StackProp<"HelpHome">) => {
 
     if (keyStore) {
       props.navigation.navigate("ModalScreen", {
+        image: require("../../assets/key.png"),
         text: i18n("overwriteKeystoreWarningText"),
         title: i18n("overwriteKeystoreWarningTitle"),
         labelRight: "OK",
         onButtonRightPress: () => {
-          console.log("ok");
+          props.navigation.navigate("Loading", {
+            label: "Generating a new keystore..."
+          });
+          generateKeystore();
         }
       });
-
-      setLoading(false);
-      return;
+    } else {
+      generateKeystore();
     }
+  };
 
+  const generateKeystore = () => {
     setLoading(true);
     requestAnimationFrame(async () => {
       const urbiKeyStore = await generateNewKeystore();
@@ -56,6 +61,7 @@ export const HelpScreen = (props: StackProp<"HelpHome">) => {
       setAddress(address);
       setTwelveWords(mnemonic);
       setLoading(false);
+      props.navigation.navigate("HelpHome");
     });
   };
 
@@ -67,50 +73,52 @@ export const HelpScreen = (props: StackProp<"HelpHome">) => {
   return (
     <>
       <SafeAreaView style={styles.wrapper}>
-        <Accordion sections={sections} />
-        <View style={styles.buttonContainer}>
-          <ButtonRegular
-            buttonStyle="primary"
-            style={styles.button}
-            label="Generate a keystore!"
-            onPress={onGeneratePress}
-            loading={loading}
-          />
-          <ButtonRegular
-            buttonStyle="brand"
-            style={styles.button}
-            label="Reset onboarding"
-            onPress={onResetPress}
-          />
-        </View>
-        {twelveWords ? (
-          <View style={styles.sections}>
-            <SectionsDivider label="Mnemonic" />
-            <TextInput
-              style={[textStyle, styles.withPadding]}
-              editable={false}
-              multiline
-            >
-              {twelveWords}
-            </TextInput>
+        <ScrollView>
+          <Accordion sections={sections} />
+          <View style={styles.buttonContainer}>
+            <ButtonRegular
+              buttonStyle="primary"
+              style={styles.button}
+              label="Generate a keystore!"
+              onPress={onGeneratePress}
+              loading={loading}
+            />
+            <ButtonRegular
+              buttonStyle="brand"
+              style={styles.button}
+              label="Reset onboarding"
+              onPress={onResetPress}
+            />
           </View>
-        ) : (
-          undefined
-        )}
-        {address ? (
-          <View style={styles.sections}>
-            <SectionsDivider label="Address" />
-            <TextInput
-              style={[textStyle, styles.withPadding]}
-              editable={false}
-              multiline
-            >
-              {address}
-            </TextInput>
-          </View>
-        ) : (
-          undefined
-        )}
+          {twelveWords ? (
+            <View style={styles.sections}>
+              <SectionsDivider label="Mnemonic" />
+              <TextInput
+                style={[textStyle, styles.withPadding]}
+                editable={false}
+                multiline
+              >
+                {twelveWords}
+              </TextInput>
+            </View>
+          ) : (
+            undefined
+          )}
+          {address ? (
+            <View style={styles.sections}>
+              <SectionsDivider label="Address" />
+              <TextInput
+                style={[textStyle, styles.withPadding]}
+                editable={false}
+                multiline
+              >
+                {address}
+              </TextInput>
+            </View>
+          ) : (
+            undefined
+          )}
+        </ScrollView>
       </SafeAreaView>
     </>
   );

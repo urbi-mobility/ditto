@@ -8,8 +8,8 @@ import { RootStackProp } from "src/App";
 const onCancel = (props: RootStackProp<"ModalScreen">) => {
   if (props.route.params.onButtonLeftPress) {
     return () => {
-      props.route.params.onButtonLeftPress!();
       props.navigation.goBack();
+      props.route.params.onButtonLeftPress!();
     };
   }
   return () => props.navigation.goBack();
