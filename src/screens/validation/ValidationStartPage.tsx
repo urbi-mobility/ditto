@@ -1,11 +1,11 @@
 import React from "react";
-import { Platform, StyleSheet } from "react-native";
-import { hasNotch } from "react-native-device-info";
+import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { OnboardingSinglePage } from "react-native-urbi-ui/components/OnboardingSinglePage";
 import { StackProp } from "src/App";
 import { i18n } from "src/i18n";
 import { emptyValidationFormData } from "src/models";
+import { onIphoneX } from "src/utils";
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1, padding: 10 },
@@ -29,7 +29,7 @@ const ValidationStartPage = (props: StackProp<"ValidationStartPage">) => {
             image: require("../../../assets/license_banner.png"),
             content: i18n("validationBody")
           }}
-          onIphoneX={Platform.OS === "ios" && hasNotch()}
+          onIphoneX={onIphoneX}
         />
       </SafeAreaView>
     </>

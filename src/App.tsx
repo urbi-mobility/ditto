@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/core";
+import { getStateFromPath, RouteProp } from "@react-navigation/core";
 import {
   NavigationNativeContainer,
   useLinking
@@ -191,7 +191,8 @@ const App = () => {
           fields: f => f.split(",").map(v => decodeURIComponent(v))
         }
       }
-    }
+    },
+    getStateFromPath: (path, options) => getStateFromPath(path, options)
   });
 
   const [onboarding, setOnboarding] = useState(

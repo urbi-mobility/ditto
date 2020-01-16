@@ -1,10 +1,10 @@
 import React from "react";
-import { StyleSheet, View, ViewStyle, Platform } from "react-native";
+import { StyleSheet, View, ViewStyle } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { hasNotch } from "react-native-device-info";
 import { Onboarding } from "react-native-urbi-ui/components/Onboarding";
-import { i18n } from "src/i18n";
 import { StackProp } from "src/App";
+import { i18n } from "src/i18n";
+import { onIphoneX } from "src/utils";
 
 const styles = StyleSheet.create({
   Wrapper: {
@@ -41,7 +41,7 @@ export const OnboardingScreen = (props: StackProp<"Onboarding">) => {
               label: i18n("startValidationProcess")
             }}
             pages={pages}
-            onIphoneX={Platform.OS === "ios" && hasNotch()}
+            onIphoneX={onIphoneX}
           />
         </View>
       </SafeAreaView>

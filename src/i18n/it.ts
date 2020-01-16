@@ -52,7 +52,11 @@ export const translations: Locale = {
   loading: "Caricamento...",
   generatingKeystore: "Genero keystore...",
   recoveringKeystore: "Carico keystore...",
-  contactingCA: "Contatto Certification Authority..."
+  contactingCA: "Contatto Certification Authority...",
+  consentMessage:
+    "%{providerName} vuole accedere ai tuoi dati per completare il processo di registrazione.\n\nVuoi permettere a %{providerName} di accedere ai tuoi dati?",
+  notNow: "Non ora",
+  allow: "Consenti"
 };
 
 export default translations;

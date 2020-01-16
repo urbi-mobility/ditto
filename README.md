@@ -16,6 +16,6 @@ Run:
 
 Run:
 
-    adb shell am start -W -a android.intent.action.VIEW -d 'ditto://consent/foo/bar?challenge=baz\&fields=huey,dewey,louie
+    adb shell am start -W -a android.intent.action.VIEW -d 'ditto://consent/foo/bar?challenge=baz\&fields=huey,dewey,louie'
 
 Note the backslash before the ampersand symbol => `\&fields`. It's needed by `adb` to correctly parse the query string.

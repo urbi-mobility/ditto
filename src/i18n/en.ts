@@ -50,7 +50,11 @@ export const translations = {
   loading: "Loading...",
   generatingKeystore: "Generating keystore...",
   recoveringKeystore: "Recovering keystore...",
-  contactingCA: "Contacting Certification Authority..."
+  contactingCA: "Contacting Certification Authority...",
+  consentMessage:
+    "%{providerName} wants to access your data in order to complete the registration process.\n\nDo you want to allow %{providerName} to access your data?",
+  notNow: "Not now",
+  allow: "Allow"
 };
 
 export type Locale = typeof translations;
