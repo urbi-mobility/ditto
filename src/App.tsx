@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
 import { getStateFromPath, RouteProp } from "@react-navigation/core";
 import {
   NavigationNativeContainer,
@@ -10,6 +9,10 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp
 } from "@react-navigation/native-stack";
+import {
+  createStackNavigator,
+  StackCardInterpolationProps
+} from "@react-navigation/stack";
 import "node-libs-react-native/globals"; // comment to make debugging work
 import React, { useEffect, useRef, useState } from "react";
 import { Image, YellowBox } from "react-native";
@@ -22,8 +25,8 @@ import { textStyle } from "react-native-urbi-ui/utils/textStyles";
 import { i18n } from "src/i18n";
 import {
   emptyValidationFormData,
-  ValidationFormData,
-  ModalScreenProps
+  ModalScreenProps,
+  ValidationFormData
 } from "src/models";
 import { ConsentScreen } from "src/screens/ConsentScreen";
 import { HelpScreen } from "src/screens/HelpScreen";
@@ -31,11 +34,12 @@ import { HomeScreen } from "src/screens/HomeScreen";
 import { OnboardingScreen } from "src/screens/OnboardingScreen";
 import { ProfileScreen } from "src/screens/ProfileScreen";
 import { SplashScreen } from "src/screens/SplashScreen";
-import { LoadingOverlay } from "src/utils/LoadingOverlay";
 import ValidationDrivingLicenseForm from "src/screens/validation/ValidationDrivingLicenseForm";
 import ValidationPersonalForm from "src/screens/validation/ValidationPersonalForm";
 import ValidationStartPage from "src/screens/validation/ValidationStartPage";
 import images from "src/utils/images";
+import { LoadingOverlay } from "src/utils/LoadingOverlay";
+import SecureStore from "src/utils/SecureStore";
 import "./globals";
 import ModalScreen from "./screens/ModalScreen";
 
@@ -105,35 +109,51 @@ const splashStyle = {
   }
 };
 
+const Context: {
+  hasSavedData: boolean;
+  setHasSavedData: (v: boolean) => any;
+} = { hasSavedData: false, setHasSavedData: () => null };
+
+export const SavedDataContext = React.createContext(Context);
+
 const ProfileTab = () => (
-  <NativeStack.Navigator
-    screenOptions={stackStyle}
-    initialRouteName="ProfileHome"
-  >
-    <NativeStack.Screen
-      name="ProfileHome"
-      component={ProfileScreen}
-      options={() => ({
-        title: i18n("navigation_profile", { name: "" })
-      })}
-    />
-    <NativeStack.Screen
-      name="ValidationStartPage"
-      component={ValidationStartPage}
-      options={{ title: i18n("beforeStarting") }}
-    />
-    <NativeStack.Screen
-      name="ValidationPersonalForm"
-      component={ValidationPersonalForm}
-      initialParams={{ validationFormData: emptyValidationFormData }}
-      options={{ title: i18n("personalInformation") }}
-    />
-    <NativeStack.Screen
-      name="ValidationDrivingLicenseForm"
-      component={ValidationDrivingLicenseForm}
-      options={{ title: i18n("dl_information") }}
-    />
-  </NativeStack.Navigator>
+  <SavedDataContext.Consumer>
+    {context => {
+      console.log(`rerender, hasSavedData? ${context.hasSavedData}`);
+      return (
+        <NativeStack.Navigator
+          screenOptions={stackStyle}
+          initialRouteName={
+            context.hasSavedData ? "ProfileHome" : "ValidationStartPage"
+          }
+        >
+          <NativeStack.Screen
+            name="ProfileHome"
+            component={ProfileScreen}
+            options={() => ({
+              title: i18n("navigation_profile", { name: "" })
+            })}
+          />
+          <NativeStack.Screen
+            name="ValidationStartPage"
+            component={ValidationStartPage}
+            options={{ title: i18n("beforeStarting") }}
+          />
+          <NativeStack.Screen
+            name="ValidationPersonalForm"
+            component={ValidationPersonalForm}
+            initialParams={{ validationFormData: emptyValidationFormData }}
+            options={{ title: i18n("personalInformation") }}
+          />
+          <NativeStack.Screen
+            name="ValidationDrivingLicenseForm"
+            component={ValidationDrivingLicenseForm}
+            options={{ title: i18n("dl_information") }}
+          />
+        </NativeStack.Navigator>
+      );
+    }}
+  </SavedDataContext.Consumer>
 );
 
 const HomeTab = () => (
@@ -185,6 +205,12 @@ type AppState = {
   onboarding: "done" | "todo" | "unknown";
 };
 
+const forFade = ({ current }: StackCardInterpolationProps) => ({
+  cardStyle: {
+    opacity: current.progress
+  }
+});
+
 const App = () => {
   const ref = useRef();
 
@@ -206,12 +232,16 @@ const App = () => {
   const [onboarding, setOnboarding] = useState(
     "unknown" as AppState["onboarding"]
   );
+  const [hasSavedData, setHasSavedData] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [initialState, setInitialState] = useState();
 
   useEffect(() => {
     AsyncStorage.getItem("onboarding").then(value =>
       setTimeout(() => setOnboarding(value === "done" ? "done" : "todo"), 1000)
+    );
+    SecureStore.getItemAsync("user").then(value =>
+      setHasSavedData(value !== null && value !== undefined)
     );
   }, []);
 
@@ -233,44 +263,51 @@ const App = () => {
 
   return isReady ? (
     <SafeAreaProvider>
-      <NavigationNativeContainer initialState={initialState} ref={ref}>
-        {onboarding === "done" ? (
-          <Stack.Navigator
-            mode="modal"
-            headerMode="none"
-            screenOptions={{ cardTransparent: true, gestureEnabled: false }}
-          >
-            <Stack.Screen
-              name="Main"
-              component={Tabs}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Loading"
-              component={LoadingOverlay}
-              initialParams={{ label: i18n("loading") }}
-            />
-            <Stack.Screen
-              name="Consent"
-              component={ConsentScreen}
-              initialParams={{ provider: "", callbackUrl: "" }}
-            />
-            <Stack.Screen name="ModalScreen" component={ModalScreen} />
-          </Stack.Navigator>
-        ) : (
-          <NativeStack.Navigator screenOptions={splashStyle}>
-            {onboarding === "unknown" ? (
-              <NativeStack.Screen name="Splash" component={SplashScreen} />
-            ) : (
-              <NativeStack.Screen
-                name="Onboarding"
-                component={OnboardingScreen}
-                initialParams={{ onDone: onOnboardingDone }}
+      <SavedDataContext.Provider value={{ hasSavedData, setHasSavedData }}>
+        <NavigationNativeContainer initialState={initialState} ref={ref}>
+          {onboarding === "done" ? (
+            <Stack.Navigator
+              mode="modal"
+              headerMode="none"
+              screenOptions={{ cardTransparent: true, gestureEnabled: false }}
+            >
+              <Stack.Screen
+                name="Main"
+                component={Tabs}
+                options={{ headerShown: false }}
               />
-            )}
-          </NativeStack.Navigator>
-        )}
-      </NavigationNativeContainer>
+              <Stack.Screen
+                name="Loading"
+                component={LoadingOverlay}
+                initialParams={{ label: i18n("loading") }}
+                options={{ cardStyleInterpolator: forFade }}
+              />
+              <Stack.Screen
+                name="Consent"
+                component={ConsentScreen}
+                initialParams={{ provider: "", callbackUrl: "" }}
+              />
+              <Stack.Screen
+                name="ModalScreen"
+                component={ModalScreen}
+                options={{ cardStyleInterpolator: forFade }}
+              />
+            </Stack.Navigator>
+          ) : (
+            <NativeStack.Navigator screenOptions={splashStyle}>
+              {onboarding === "unknown" ? (
+                <NativeStack.Screen name="Splash" component={SplashScreen} />
+              ) : (
+                <NativeStack.Screen
+                  name="Onboarding"
+                  component={OnboardingScreen}
+                  initialParams={{ onDone: onOnboardingDone }}
+                />
+              )}
+            </NativeStack.Navigator>
+          )}
+        </NavigationNativeContainer>
+      </SavedDataContext.Provider>
     </SafeAreaProvider>
   ) : null;
 };

@@ -1,4 +1,5 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import { differenceInSeconds } from "date-fns";
+import React, { useContext, useLayoutEffect } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { ListItem } from "react-native-urbi-ui/components/ListItem";
@@ -9,7 +10,7 @@ import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider"
 import { colors } from "react-native-urbi-ui/utils/colors";
 import { Icon } from "react-native-urbi-ui/utils/const";
 import { onPressShowNotYet } from "react-native-urbi-ui/utils/functions";
-import { StackProp } from "src/App";
+import { SavedDataContext, StackProp } from "src/App";
 import { i18n } from "src/i18n";
 import SecureStore from "src/utils/SecureStore";
 
@@ -40,6 +41,8 @@ const loadUsername = async () => {
 };
 
 export const ProfileScreen = (props: StackProp<"ProfileHome">) => {
+  const { setHasSavedData } = useContext(SavedDataContext);
+
   const loadFromStorage = () => {
     loadUsername().then(username =>
       props.navigation.setOptions({
@@ -51,6 +54,26 @@ export const ProfileScreen = (props: StackProp<"ProfileHome">) => {
   };
 
   useLayoutEffect(loadFromStorage, []);
+
+  const onDeletePress = () => {
+    props.navigation.navigate("ModalScreen", {
+      title: i18n("deleteDataTitle"),
+      text: i18n("deleteDataText"),
+      labelRight: i18n("deleteDataConfirm"),
+      onButtonRightPress: () => {
+        const started = new Date();
+        props.navigation.navigate("Loading", { label: i18n("deleting") });
+        SecureStore.deleteItemAsync("user").then(_ => {
+          if (differenceInSeconds(started, new Date()) < 2) {
+            setTimeout(() => props.navigation.navigate("Home"), 2000);
+          } else {
+            setHasSavedData(false);
+            props.navigation.navigate("Home");
+          }
+        });
+      }
+    });
+  };
 
   return (
     <SafeAreaView style={styles.wrapper}>
@@ -111,7 +134,7 @@ export const ProfileScreen = (props: StackProp<"ProfileHome">) => {
           />
           <ListItemCompact
             content={<Label text={i18n("deleteData")} />}
-            onPress={onPressShowNotYet}
+            onPress={onDeletePress}
             backgroundColor={colors.ukko}
           />
         </View>

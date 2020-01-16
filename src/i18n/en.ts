@@ -61,7 +61,12 @@ export const translations = {
   overwriteKeystoreWarningText:
     "You already have a keystore on this device. Overwriting it is not recommended.",
   somethingWentWrong: "Something went wrong",
-  consentCallbackFailed: "Couldn't open %{providerName}"
+  consentCallbackFailed: "Couldn't open %{providerName}",
+  deleteDataTitle: "Really delete?",
+  deleteDataText:
+    "Deleting your data will make you lose your certification on the blockchain, too. This action CANNOT be undone!\n\nReally delete all of your data?",
+  deleteDataConfirm: "Delete",
+  deleting: "Deleting..."
 };
 
 export type Locale = typeof translations;

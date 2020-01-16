@@ -13,6 +13,7 @@ import { generateNewKeystore } from "src/utils/cryptoUtils";
 import { showLongAlert } from "react-native-urbi-ui/utils/functions";
 import SecureStore from "src/utils/SecureStore";
 import { StackProp } from "src/App";
+import { differenceInSeconds } from "date-fns";
 
 const sectionIds = ["howDoesItWork", "whyBlockchain", "anythingMissing"];
 
@@ -50,6 +51,7 @@ export const HelpScreen = (props: StackProp<"HelpHome">) => {
   const generateKeystore = () => {
     setLoading(true);
     requestAnimationFrame(async () => {
+      const started = new Date();
       const urbiKeyStore = await generateNewKeystore();
       SecureStore.setItemAsync(
         "keyStore",
@@ -57,11 +59,18 @@ export const HelpScreen = (props: StackProp<"HelpHome">) => {
           _.pick(urbiKeyStore, ["password", "mnemonic", "address"])
         )
       );
-      const { address, mnemonic } = urbiKeyStore;
-      setAddress(address);
-      setTwelveWords(mnemonic);
-      setLoading(false);
-      props.navigation.navigate("HelpHome");
+      const updateUI = () => {
+        const { address, mnemonic } = urbiKeyStore;
+        setAddress(address);
+        setTwelveWords(mnemonic);
+        setLoading(false);
+        props.navigation.navigate("HelpHome");
+      };
+      if (differenceInSeconds(started, new Date()) < 2) {
+        setTimeout(updateUI, 2000);
+      } else {
+        updateUI();
+      }
     });
   };
 

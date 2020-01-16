@@ -63,7 +63,12 @@ export const translations: Locale = {
   overwriteKeystoreWarningText:
     "Hai già un keystore memorizzato. Non è consigliata la sovrascrittura.",
   somethingWentWrong: "Errore",
-  consentCallbackFailed: "Impossibile aprire %{providerName}"
+  consentCallbackFailed: "Impossibile aprire %{providerName}",
+  deleteDataTitle: "Conferma eliminazione",
+  deleteDataText:
+    "Eliminando i dati non sarà più possibile utilizzare la certificazione salvata nella blockchain. Questa operazione NON può essere cancellata.\n\nEliminare davvero i dati?",
+  deleteDataConfirm: "Elimina",
+  deleting: "Eliminazione in corso..."
 };
 
 export default translations;
