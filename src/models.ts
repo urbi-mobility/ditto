@@ -64,3 +64,13 @@ export const emptyValidationFormData: ValidationFormData = {
     expiryDate: new Date()
   }
 };
+
+export type ModalScreenProps = {
+  image?: string;
+  title: string;
+  text: string;
+  labelRight: string;
+  onButtonRightPress: () => any;
+  labelLeft?: string;
+  onButtonLeftPress?: () => any;
+};

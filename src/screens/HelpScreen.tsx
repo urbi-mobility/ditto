@@ -1,8 +1,7 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import _ from "lodash";
 import React, { useState } from "react";
-import { StatusBar, StyleSheet, TextInput, View } from "react-native";
-import * as Keychain from "react-native-keychain";
+import { StyleSheet, TextInput, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
 import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider";
@@ -12,6 +11,8 @@ import { i18n } from "src/i18n";
 import { Locale } from "src/i18n/en";
 import { generateNewKeystore } from "src/utils/cryptoUtils";
 import { showLongAlert } from "react-native-urbi-ui/utils/functions";
+import SecureStore from "src/utils/SecureStore";
+import { StackProp } from "src/App";
 
 const sectionIds = ["howDoesItWork", "whyBlockchain", "anythingMissing"];
 
@@ -20,18 +21,33 @@ const sections = sectionIds.map(i => ({
   content: i18n(`help_${i}Body` as keyof Locale)
 }));
 
-export const HelpScreen = () => {
+export const HelpScreen = (props: StackProp<"HelpHome">) => {
   const [loading, setLoading] = useState(false);
   const [twelveWords, setTwelveWords] = useState("");
   const [address, setAddress] = useState("");
 
   const onGeneratePress = () => {
+    let keyStore = SecureStore.getItemAsync("keyStore");
+
+    if (keyStore) {
+      props.navigation.navigate("ModalScreen", {
+        text: i18n("overwriteKeystoreWarningText"),
+        title: i18n("overwriteKeystoreWarningTitle"),
+        labelRight: "OK",
+        onButtonRightPress: () => {
+          console.log("ok");
+        }
+      });
+
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     requestAnimationFrame(async () => {
       const urbiKeyStore = await generateNewKeystore();
-      Keychain.setInternetCredentials(
-        "urbiKeyStore",
-        "urbiKeyStore",
+      SecureStore.setItemAsync(
+        "keyStore",
         JSON.stringify(
           _.pick(urbiKeyStore, ["password", "mnemonic", "address"])
         )

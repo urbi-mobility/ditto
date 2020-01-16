@@ -54,7 +54,12 @@ export const translations = {
   consentMessage:
     "%{providerName} wants to access your data in order to complete the registration process.\n\nDo you want to allow %{providerName} to access your data?",
   notNow: "Not now",
-  allow: "Allow"
+  allow: "Allow",
+  cancel: "Cancel",
+  ok: "OK",
+  overwriteKeystoreWarningTitle: "Keystore Overwrite",
+  overwriteKeystoreWarningText:
+    "You already have a keystore on this device. Overwriting it is not recommended."
 };
 
 export type Locale = typeof translations;

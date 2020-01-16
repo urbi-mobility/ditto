@@ -20,7 +20,11 @@ import { colors } from "react-native-urbi-ui/utils/colors";
 import { onIOS } from "react-native-urbi-ui/utils/const";
 import { textStyle } from "react-native-urbi-ui/utils/textStyles";
 import { i18n } from "src/i18n";
-import { emptyValidationFormData, ValidationFormData } from "src/models";
+import {
+  emptyValidationFormData,
+  ValidationFormData,
+  ModalScreenProps
+} from "src/models";
 import { ConsentScreen } from "src/screens/ConsentScreen";
 import { HelpScreen } from "src/screens/HelpScreen";
 import { HomeScreen } from "src/screens/HomeScreen";
@@ -33,6 +37,7 @@ import ValidationPersonalForm from "src/screens/validation/ValidationPersonalFor
 import ValidationStartPage from "src/screens/validation/ValidationStartPage";
 import images from "src/utils/images";
 import "./globals";
+import ModalScreen from "./screens/ModalScreen";
 
 enableScreens();
 
@@ -51,15 +56,18 @@ type RootRoutes = {
     challenge?: string;
     fields?: string[];
   };
+  ModalScreen: ModalScreenProps;
 };
 
 export type RootStackProp<T extends keyof RootRoutes> = {
+  navigation: NativeStackNavigationProp<RootRoutes, T>;
   route: RouteProp<RootRoutes, T>;
 };
 
 export type Routes = {
   Loading: RootRoutes["Loading"];
   Consent: RootRoutes["Consent"];
+  ModalScreen: RootRoutes["ModalScreen"];
   Home: undefined;
   ProfileHome: undefined;
   HelpHome: undefined;
@@ -247,6 +255,7 @@ const App = () => {
               component={ConsentScreen}
               initialParams={{ provider: "", callbackUrl: "" }}
             />
+            <Stack.Screen name="ModalScreen" component={ModalScreen} />
           </Stack.Navigator>
         ) : (
           <NativeStack.Navigator screenOptions={splashStyle}>
