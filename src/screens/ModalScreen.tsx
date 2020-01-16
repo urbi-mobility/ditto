@@ -6,13 +6,11 @@ import { i18n } from "src/i18n";
 import { RootStackProp } from "src/App";
 
 const onCancel = (props: RootStackProp<"ModalScreen">) => {
-  if (props.route.params.onButtonLeftPress) {
-    return () => {
-      props.navigation.goBack();
+  return () => {
+    if (props.route.params.onButtonLeftPress)
       props.route.params.onButtonLeftPress!();
-    };
-  }
-  return () => props.navigation.goBack();
+    props.navigation.goBack();
+  };
 };
 
 const onConfirm = (props: RootStackProp<"ModalScreen">) => () => {

@@ -22,6 +22,7 @@ import {
 } from "src/utils/cryptoUtils";
 import { serializeToJson } from "src/utils/jsonUtils";
 import SecureStore from "src/utils/SecureStore";
+import { resolvePlugin } from "@babel/core";
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
@@ -67,28 +68,17 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
     this.setState({ scrollViewAnchor: e.nativeEvent.layout.y });
   }
 
-  async loadKeyStore(
-    navigation: StackProp<"ValidationDrivingLicenseForm">["navigation"]
-  ) {
+  async loadKeyStore() {
     const creds = await SecureStore.getItemAsync("keyStore");
-    let keystore: UrbiKeyStore;
 
+    let keystore: UrbiKeyStore;
     if (creds) {
+      console.log("KeyStore found");
       const parsed = JSON.parse(creds);
-      navigation.navigate("Loading", {
-        label: i18n("recoveringKeystore")
-      });
       keystore = await createKeystore(parsed.mnemonic, parsed.password);
     } else {
-      navigation.navigate("Loading", {
-        label: i18n("generatingKeystore")
-      });
+      console.log("KeyStore NOT found, generating...");
       keystore = await generateNewKeystore();
-
-      SecureStore.setItemAsync(
-        "keystore",
-        JSON.stringify(_.pick(keystore, ["password", "mnemonic", "address"]))
-      );
     }
     return keystore;
   }
@@ -97,10 +87,15 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
     const { navigation } = this.props;
     console.log(submitted);
 
-    const keyStore = await this.loadKeyStore(navigation);
+    navigation.navigate("Loading", {
+      label: i18n("recoveringKeystore")
+    });
+
+    const keyStore = await this.loadKeyStore();
     const sortedAndSerialized = serializeToJson(this.withNonce(submitted));
 
     await SecureStore.setItemAsync("user", sortedAndSerialized);
+    console.log(submitted);
 
     navigation.navigate("Loading", {
       label: i18n("contactingCA")

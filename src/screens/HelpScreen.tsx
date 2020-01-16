@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import _ from "lodash";
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { StyleSheet, TextInput, ScrollView, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
@@ -27,38 +27,30 @@ export const HelpScreen = (props: StackProp<"HelpHome">) => {
   const [twelveWords, setTwelveWords] = useState("");
   const [address, setAddress] = useState("");
 
-  const onGeneratePress = () => {
-    let keyStore = SecureStore.getItemAsync("keyStore");
+  const onGeneratePress = async () => {
+    const keyStore = await SecureStore.getItemAsync("keyStore");
+    keyStore ? showWarningModal(() => generateKeystore()) : generateKeystore();
+  };
 
-    if (keyStore) {
-      props.navigation.navigate("ModalScreen", {
-        image: require("../../assets/key.png"),
-        text: i18n("overwriteKeystoreWarningText"),
-        title: i18n("overwriteKeystoreWarningTitle"),
-        labelRight: "OK",
-        onButtonRightPress: () => {
-          props.navigation.navigate("Loading", {
-            label: "Generating a new keystore..."
-          });
-          generateKeystore();
-        }
-      });
-    } else {
-      generateKeystore();
-    }
+  const showWarningModal = (callback: () => any) => {
+    props.navigation.navigate("ModalScreen", {
+      image: require("../../assets/key.png"),
+      text: i18n("overwriteKeystoreWarningText"),
+      title: i18n("overwriteKeystoreWarningTitle"),
+      labelRight: i18n("ok"),
+      onButtonRightPress: callback
+    });
   };
 
   const generateKeystore = () => {
     setLoading(true);
+    props.navigation.navigate("Loading", {
+      label: "Generating a new keystore..."
+    });
+
     requestAnimationFrame(async () => {
       const started = new Date();
       const urbiKeyStore = await generateNewKeystore();
-      SecureStore.setItemAsync(
-        "keyStore",
-        JSON.stringify(
-          _.pick(urbiKeyStore, ["password", "mnemonic", "address"])
-        )
-      );
       const updateUI = () => {
         const { address, mnemonic } = urbiKeyStore;
         setAddress(address);
@@ -76,6 +68,9 @@ export const HelpScreen = (props: StackProp<"HelpHome">) => {
 
   const onResetPress = () => {
     AsyncStorage.removeItem("onboarding");
+    SecureStore.deleteItemAsync("keyStore");
+    setAddress("");
+    setTwelveWords("");
     showLongAlert("Reload the app to see the onboarding again!");
   };
 

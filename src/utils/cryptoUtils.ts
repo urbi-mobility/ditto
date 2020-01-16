@@ -1,5 +1,7 @@
 import * as lightwallet from "eth-lightwallet";
 import { keystore } from "eth-lightwallet";
+import SecureStore from "./SecureStore";
+import _ from "lodash";
 
 const signMsg = (
   ks: keystore,
@@ -58,8 +60,14 @@ export const createKeystore = (mnemonic: string, password: string) =>
     );
   });
 
-export const generateNewKeystore = () =>
-  createKeystore(
+export const generateNewKeystore = () => {
+  const urbiKeyStore = createKeystore(
     lightwallet.keystore.generateRandomSeed(),
     "omfg it's a secret"
   );
+  SecureStore.setItemAsync(
+    "keyStore",
+    JSON.stringify(_.pick(urbiKeyStore, ["password", "mnemonic", "address"]))
+  );
+  return urbiKeyStore;
+};
