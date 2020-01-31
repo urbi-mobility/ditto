@@ -66,7 +66,8 @@ export const translations = {
   deleteDataText:
     "Deleting your data will make you lose your certification on the blockchain, too. This action CANNOT be undone!\n\nReally delete all of your data?",
   deleteDataConfirm: "Delete",
-  deleting: "Deleting..."
+  deleting: "Deleting...",
+  signingData: "Signing data..."
 };
 
 export type Locale = typeof translations;

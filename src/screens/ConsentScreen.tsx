@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/core";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -21,6 +22,7 @@ import { SplashScreen } from "src/screens/SplashScreen";
 import { log } from "src/utils";
 import { createKeystore, sign, UrbiKeyStore } from "src/utils/cryptoUtils";
 import SecureStore from "src/utils/SecureStore";
+import { onIOS } from "react-native-urbi-ui/utils/const";
 
 const styles = StyleSheet.create({
   Wrapper: {
@@ -74,52 +76,73 @@ const loadKeyStore = async () => {
   return keystore;
 };
 
-const openApp = (
-  provider: string,
-  callbackUrl: string,
-  consent: boolean,
-  payload?: string,
-  challenge?: string
-) => async () => {
-  try {
-    let challengeResponse = "";
-    if (challenge) {
-      const keystore = await loadKeyStore();
-      if (keystore) {
-        challengeResponse = encodeURIComponent(sign(keystore, challenge));
-      }
-    }
-    const url = `${callbackUrl}?consent=${consent}&payload=${payload}${
-      challengeResponse ? `&response=${challengeResponse}` : ""
-    }`;
-    log(`callback deep link: ${url}`);
-    await Linking.openURL(url);
-  } catch (err) {
-    Alert.alert(
-      i18n("somethingWentWrong"),
-      i18n("consentCallbackFailed", { providerName: provider })
-    );
-  }
-};
-
-const onAccept = (
-  provider: string,
-  callbackUrl: string,
-  challenge?: string
-) => async () => {
-  const data = await SecureStore.getItemAsync("user");
-  openApp(provider, callbackUrl, true, data, challenge)();
-};
-
 const ConsentScreenUnmemoized = (props: RootStackProp<"Consent">) => {
   const [showSplash, setShowSplash] = useState(true);
   const { params } = props.route;
   const provider = params.provider ?? "default";
   const providerName = providerNames[provider] ?? provider;
+  const navigation = useNavigation();
 
   useEffect(() => {
     setTimeout(() => setShowSplash(false), 1000);
   }, []);
+
+  const openApp = (
+    provider: string,
+    callbackUrl: string,
+    consent: boolean,
+    payload?: string,
+    challenge?: string
+  ) => async () => {
+    try {
+      let challengeResponse = "";
+      if (challenge) {
+        navigation.navigate("Loading", {
+          label: i18n("signingData")
+        });
+
+        const keystore = await loadKeyStore();
+        if (keystore) {
+          challengeResponse = encodeURIComponent(sign(keystore, challenge));
+        }
+      }
+      const url = `${callbackUrl}?consent=${consent}&payload=${payload}${
+        challengeResponse ? `&response=${challengeResponse}` : ""
+      }`;
+      log(`callback deep link: ${url}`);
+      await Linking.openURL(url);
+      navigation.navigate("Home");
+    } catch (err) {
+      const onDialogDismiss = () => {
+        navigation.navigate("Main");
+        navigation.reset({ index: 0, routes: [{ name: "Home" }] });
+      };
+
+      Alert.alert(
+        i18n("somethingWentWrong"),
+        i18n("consentCallbackFailed", { providerName: provider }),
+        [
+          {
+            text: "Ok",
+            onPress: onDialogDismiss
+          }
+        ],
+        {
+          onDismiss: onDialogDismiss
+        }
+      );
+      if (onIOS) navigation.navigate("Home");
+    }
+  };
+
+  const onAccept = (
+    provider: string,
+    callbackUrl: string,
+    challenge?: string
+  ) => async () => {
+    const data = await SecureStore.getItemAsync("user");
+    openApp(provider, callbackUrl, true, data, challenge)();
+  };
 
   if (showSplash) return <SplashScreen />;
 

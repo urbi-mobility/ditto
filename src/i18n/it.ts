@@ -68,7 +68,8 @@ export const translations: Locale = {
   deleteDataText:
     "Eliminando i dati non sarà più possibile utilizzare la certificazione salvata nella blockchain. Questa operazione NON può essere cancellata.\n\nEliminare davvero i dati?",
   deleteDataConfirm: "Elimina",
-  deleting: "Eliminazione in corso..."
+  deleting: "Eliminazione in corso...",
+  signingData: "Firma dati in corso..."
 };
 
 export default translations;
