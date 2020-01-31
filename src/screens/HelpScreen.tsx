@@ -28,8 +28,8 @@ export const HelpScreen = (props: StackProp<"HelpHome">) => {
   const [address, setAddress] = useState("");
 
   const onGeneratePress = async () => {
-    const keyStore = await SecureStore.getItemAsync("keyStore");
-    keyStore ? showWarningModal(() => generateKeystore()) : generateKeystore();
+    const keystore = await SecureStore.getItemAsync("keystore");
+    keystore ? showWarningModal(() => generateKeystore()) : generateKeystore();
   };
 
   const showWarningModal = (callback: () => any) => {
@@ -68,7 +68,7 @@ export const HelpScreen = (props: StackProp<"HelpHome">) => {
 
   const onResetPress = () => {
     AsyncStorage.removeItem("onboarding");
-    SecureStore.deleteItemAsync("keyStore");
+    SecureStore.deleteItemAsync("keystore");
     setAddress("");
     setTwelveWords("");
     showLongAlert("Reload the app to see the onboarding again!");

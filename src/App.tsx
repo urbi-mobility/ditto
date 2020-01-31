@@ -118,14 +118,11 @@ export const SavedDataContext = React.createContext(Context);
 
 const ProfileTab = () => (
   <SavedDataContext.Consumer>
-    {context => {
-      console.log(`rerender, hasSavedData? ${context.hasSavedData}`);
-      return (
+    {(context: typeof Context) =>
+      context.hasSavedData ? (
         <NativeStack.Navigator
           screenOptions={stackStyle}
-          initialRouteName={
-            context.hasSavedData ? "ProfileHome" : "ValidationStartPage"
-          }
+          initialRouteName="ProfileHome"
         >
           <NativeStack.Screen
             name="ProfileHome"
@@ -134,6 +131,23 @@ const ProfileTab = () => (
               title: i18n("navigation_profile", { name: "" })
             })}
           />
+          <NativeStack.Screen
+            name="ValidationPersonalForm"
+            component={ValidationPersonalForm}
+            initialParams={{ validationFormData: emptyValidationFormData }}
+            options={{ title: i18n("personalInformation") }}
+          />
+          <NativeStack.Screen
+            name="ValidationDrivingLicenseForm"
+            component={ValidationDrivingLicenseForm}
+            options={{ title: i18n("dl_information") }}
+          />
+        </NativeStack.Navigator>
+      ) : (
+        <NativeStack.Navigator
+          screenOptions={stackStyle}
+          initialRouteName="ValidationStartPage"
+        >
           <NativeStack.Screen
             name="ValidationStartPage"
             component={ValidationStartPage}
@@ -151,8 +165,8 @@ const ProfileTab = () => (
             options={{ title: i18n("dl_information") }}
           />
         </NativeStack.Navigator>
-      );
-    }}
+      )
+    }
   </SavedDataContext.Consumer>
 );
 
@@ -240,9 +254,10 @@ const App = () => {
     AsyncStorage.getItem("onboarding").then(value =>
       setTimeout(() => setOnboarding(value === "done" ? "done" : "todo"), 1000)
     );
-    SecureStore.getItemAsync("user").then(value =>
-      setHasSavedData(value !== null && value !== undefined)
-    );
+    SecureStore.getItemAsync("user").then(value => {
+      console.log(`user from disk: ${value ? JSON.stringify(value) : value}`);
+      setHasSavedData(value !== null && value !== undefined);
+    });
   }, []);
 
   useEffect(() => {

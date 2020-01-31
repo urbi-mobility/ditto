@@ -18,8 +18,8 @@ import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
 import { RootStackProp } from "src/App";
 import { i18n } from "src/i18n";
 import { SplashScreen } from "src/screens/SplashScreen";
+import { createKeystore, sign, UrbiKeyStore } from "src/utils/cryptoUtils";
 import SecureStore from "src/utils/SecureStore";
-import { UrbiKeyStore, createKeystore, sign } from "src/utils/cryptoUtils";
 
 const styles = StyleSheet.create({
   Wrapper: {
@@ -62,7 +62,7 @@ const providerNames: { [provider: string]: string } = {
 const gradientColors = [colors.zeroAlphaUlisse, colors.ulisse];
 
 const loadKeyStore = async () => {
-  const creds = await SecureStore.getItemAsync("keyStore");
+  const creds = await SecureStore.getItemAsync("keystore");
   let keystore: UrbiKeyStore | undefined;
 
   if (creds) {

@@ -1,5 +1,6 @@
+import { useNavigation } from "@react-navigation/core";
 import { differenceInSeconds } from "date-fns";
-import React, { useContext, useLayoutEffect } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { ListItem } from "react-native-urbi-ui/components/ListItem";
@@ -10,8 +11,10 @@ import { SectionsDivider } from "react-native-urbi-ui/molecules/SectionsDivider"
 import { colors } from "react-native-urbi-ui/utils/colors";
 import { Icon } from "react-native-urbi-ui/utils/const";
 import { onPressShowNotYet } from "react-native-urbi-ui/utils/functions";
-import { SavedDataContext, StackProp } from "src/App";
+import { SavedDataContext } from "src/App";
 import { i18n } from "src/i18n";
+import { emptyValidationFormData } from "src/models";
+import { deserializeUserData } from "src/utils/jsonUtils";
 import SecureStore from "src/utils/SecureStore";
 
 const styles = StyleSheet.create({
@@ -22,54 +25,61 @@ const styles = StyleSheet.create({
   }
 });
 
-const tapLicense = (props: StackProp<"ProfileHome">) => () => {
-  props.navigation.navigate("ValidationStartPage");
+const loadUserFromDisk = async () => {
+  const stored: string | undefined = await SecureStore.getItemAsync("user");
+  console.log(`userData: ${stored}`);
+  const userData = stored ? deserializeUserData(stored) : undefined;
+  return userData;
 };
 
-const tapKeystore = () => {
-  console.log("keystore");
-};
-
-const tapContract = () => {
-  console.log("contract");
-};
-
-const loadUsername = async () => {
-  const userData = await SecureStore.getItemAsync("user");
-  console.log(`userData: ${userData}`);
-  return userData ? JSON.parse(userData).firstName : "";
-};
-
-export const ProfileScreen = (props: StackProp<"ProfileHome">) => {
+export const ProfileScreen = () => {
+  const navigation = useNavigation();
+  const [validationFormData, setValidationFormData] = useState(
+    emptyValidationFormData
+  );
   const { setHasSavedData } = useContext(SavedDataContext);
 
   const loadFromStorage = () => {
-    loadUsername().then(username =>
-      props.navigation.setOptions({
+    loadUserFromDisk().then(user => {
+      navigation.setOptions({
         headerTitle: i18n("navigation_profile", {
-          name: username ? ` ${username}` : ""
+          name: user?.firstName ? ` ${user.firstName}` : ""
         })
-      })
-    );
+      });
+      setValidationFormData(user ?? emptyValidationFormData);
+    });
   };
-
   useLayoutEffect(loadFromStorage, []);
 
+  const onLicensePress = () =>
+    navigation.navigate("ValidationPersonalForm", { validationFormData });
+
+  const onKeystorePress = () => {
+    console.log("keystore");
+  };
+
+  const onContractPress = () => {
+    console.log("contract");
+  };
+
   const onDeletePress = () => {
-    props.navigation.navigate("ModalScreen", {
+    navigation.navigate("ModalScreen", {
       title: i18n("deleteDataTitle"),
       text: i18n("deleteDataText"),
       labelRight: i18n("deleteDataConfirm"),
       onButtonRightPress: () => {
         const started = new Date();
-        props.navigation.navigate("Loading", { label: i18n("deleting") });
+        navigation.navigate("Loading", { label: i18n("deleting") });
         SecureStore.deleteItemAsync("user").then(_ => {
-          if (differenceInSeconds(started, new Date()) < 2) {
-            setTimeout(() => props.navigation.navigate("Home"), 2000);
-          } else {
+          const goHome = () => {
+            console.log("no more saved data");
             setHasSavedData(false);
-            props.navigation.navigate("Home");
-          }
+            navigation.navigate("Home");
+          };
+
+          if (differenceInSeconds(started, new Date()) < 2)
+            setTimeout(goHome, 2000);
+          else goHome();
         });
       }
     });
@@ -92,7 +102,7 @@ export const ProfileScreen = (props: StackProp<"ProfileHome">) => {
           end={
             <Icon name="disclosure-small" size={18} color={colors.primary} />
           }
-          onPress={tapLicense(props)}
+          onPress={onLicensePress}
           backgroundColor={colors.ulisse}
         />
         <SectionsDivider
@@ -109,7 +119,7 @@ export const ProfileScreen = (props: StackProp<"ProfileHome">) => {
           end={
             <Icon name="disclosure-small" size={18} color={colors.primary} />
           }
-          onPress={tapKeystore}
+          onPress={onKeystorePress}
           backgroundColor={colors.ulisse}
         />
         <ListItem
@@ -122,7 +132,7 @@ export const ProfileScreen = (props: StackProp<"ProfileHome">) => {
           end={
             <Icon name="disclosure-small" size={18} color={colors.primary} />
           }
-          onPress={tapContract}
+          onPress={onContractPress}
           backgroundColor={colors.ulisse}
         />
         <View style={styles.bottomView}>

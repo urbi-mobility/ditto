@@ -1,7 +1,6 @@
-import { differenceInSeconds } from "date-fns";
 import { Formik } from "formik";
 import _ from "lodash";
-import React from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { LayoutChangeEvent, ScrollView, StyleSheet } from "react-native";
 import fetch from "react-native-fetch-polyfill";
 import SafeAreaView from "react-native-safe-area-view";
@@ -11,9 +10,10 @@ import UrbiForm, {
   UrbiFormProps
 } from "react-native-urbi-ui/components/form/UrbiForm";
 import { ButtonRegular } from "react-native-urbi-ui/molecules/buttons/ButtonRegular";
-import { StackProp } from "src/App";
+import { SavedDataContext, StackProp } from "src/App";
 import { appLocaleShort, i18n } from "src/i18n";
 import { ValidationFormData } from "src/models";
+import { callNoSoonerThanSecondsFrom } from "src/utils";
 import {
   createKeystore,
   generateNewKeystore,
@@ -22,77 +22,78 @@ import {
 } from "src/utils/cryptoUtils";
 import { serializeToJson } from "src/utils/jsonUtils";
 import SecureStore from "src/utils/SecureStore";
-import { resolvePlugin } from "@babel/core";
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
   button: { margin: 30 }
 });
 
-type DrivingLicenseFormState = {
-  scrollViewAnchor: number;
-  validationFormData: ValidationFormData;
-};
+const ValidationDrivingLicenseForm = (
+  props: StackProp<"ValidationDrivingLicenseForm">
+) => {
+  const { setHasSavedData } = useContext(SavedDataContext);
+  const [scrollViewAnchor, setScrollViewAnchor] = useState(0);
+  const [validationFormData, setValidationFormData] = useState(
+    props.route.params.validationFormData
+  );
+  const scrollView = useRef<ScrollView>(null);
 
-class ValidationDrivingLicenseForm extends React.PureComponent<
-  StackProp<"ValidationDrivingLicenseForm">,
-  DrivingLicenseFormState
-> {
-  constructor(props: StackProp<"ValidationDrivingLicenseForm">) {
-    super(props);
-    this.scrollView = React.createRef();
-    this.renderForm = this.renderForm.bind(this);
-    this.onLayout = this.onLayout.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-    this.state = {
-      scrollViewAnchor: 0,
-      validationFormData: props.route.params.validationFormData
-    };
-  }
+  useEffect(() => {
+    setValidationFormData(props.route.params.validationFormData);
+    console.log(props.route.params.validationFormData);
+  }, [validationFormData]);
 
-  componentDidMount() {
-    this.setState({
-      validationFormData: this.props.route.params.validationFormData
-    });
-    console.log(this.props.route.params.validationFormData);
-  }
-
-  private scrollView: React.RefObject<ScrollView>;
-
-  withNonce = (submitted: ValidationFormData) => {
+  const withNonce = (submitted: ValidationFormData) => {
     submitted.nonce = _.random(1000000, 100000000).toString();
     return submitted;
   };
 
-  onLayout(e: LayoutChangeEvent) {
-    this.setState({ scrollViewAnchor: e.nativeEvent.layout.y });
-  }
+  const onLayout = (e: LayoutChangeEvent) =>
+    setScrollViewAnchor(e.nativeEvent.layout.y);
 
-  async loadKeyStore() {
-    const creds = await SecureStore.getItemAsync("keyStore");
+  const loadKeyStore = async () => {
+    const creds = await SecureStore.getItemAsync("keystore");
 
-    let keystore: UrbiKeyStore;
+    let keystore: UrbiKeyStore | undefined;
+
     if (creds) {
       console.log("KeyStore found");
       const parsed = JSON.parse(creds);
-      keystore = await createKeystore(parsed.mnemonic, parsed.password);
-    } else {
-      console.log("KeyStore NOT found, generating...");
+      if (parsed.mnemonic && parsed.password) {
+        keystore = await createKeystore(parsed.mnemonic, parsed.password);
+      } else {
+        console.log(
+          `Bad KeyStore format: mnemonic ${
+            parsed.mnemonic ? "" : "NOT "
+          }set, password ${parsed.password ? "" : "NOT "}set`
+        );
+        console.log(JSON.stringify(parsed, null, 2));
+      }
+    }
+
+    if (!keystore) {
+      console.log("KeyStore NOT found, or bad format. Generating...");
       keystore = await generateNewKeystore();
     }
-    return keystore;
-  }
 
-  async onSubmit(submitted: ValidationFormData) {
-    const { navigation } = this.props;
-    console.log(submitted);
+    return keystore;
+  };
+
+  const onSubmit = async (submitted: ValidationFormData) => {
+    const { navigation } = props;
 
     navigation.navigate("Loading", {
       label: i18n("recoveringKeystore")
     });
 
-    const keyStore = await this.loadKeyStore();
-    const sortedAndSerialized = serializeToJson(this.withNonce(submitted));
+    const keystore = await loadKeyStore();
+
+    if (!keystore) {
+      console.error("Couldn't recover KeyStore");
+      return;
+    }
+
+    const sortedAndSerialized = serializeToJson(withNonce(submitted));
 
     await SecureStore.setItemAsync("user", sortedAndSerialized);
     console.log(submitted);
@@ -104,13 +105,13 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
     const started = new Date();
     fetch("http://192.168.2.167:8080/validate", {
       method: "POST",
-      timeout: 25000,
+      timeout: 15000,
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        address: keyStore.address,
-        signature: sign(keyStore, sortedAndSerialized),
+        address: keystore.address,
+        signature: sign(keystore, sortedAndSerialized),
         payload: submitted
       })
     })
@@ -118,82 +119,71 @@ class ValidationDrivingLicenseForm extends React.PureComponent<
         console.log("Done?");
         const response = await r.json();
         console.log(response);
+        setHasSavedData(true);
+        callNoSoonerThanSecondsFrom(2, started, () => {
+          navigation.navigate("ValidationDrivingLicenseForm"); // hide overlay
+          navigation.reset({ index: 0, routes: [{ name: "ProfileHome" }] });
+        });
       })
       .catch(r => {
-        console.log("Error?");
-        console.log(r);
-      })
-      .finally(() => {
-        console.log("Finally");
-        const hideLoadingOverlay = () =>
-          navigation.navigate("ValidationDrivingLicenseForm", {
-            validationFormData: submitted
-          });
-
-        if (differenceInSeconds(started, new Date()) < 2) {
-          setTimeout(hideLoadingOverlay, 2000);
-        } else {
-          hideLoadingOverlay();
-        }
+        callNoSoonerThanSecondsFrom(2, started, () => {
+          navigation.navigate("ValidationDrivingLicenseForm");
+          console.warn(r);
+        });
       });
-  }
+  };
 
-  renderForm(p: UrbiFormProps) {
-    return (
-      <UrbiForm
-        {...p}
-        handleSubmit={p.handleSubmit}
-        parentScrollView={this.scrollView}
-        scrollViewAnchor={this.state.scrollViewAnchor}
-        autoScroll
-      >
-        <ListItemTextInput
-          name="drivingLicense.number"
-          label={i18n("dl_number")}
-          type="text"
-          focusable
-        />
-        <DatePicker
-          name="drivingLicense.issueDate"
-          label={i18n("dl_issueDate")}
-          mode="date"
-          locale={appLocaleShort}
-          focusable
-        />
-        <DatePicker
-          name="drivingLicense.expiryDate"
-          label={i18n("dl_expiryDate")}
-          mode="date"
-          locale={appLocaleShort}
-          focusable
-        />
-        <ButtonRegular
-          style={styles.button}
-          buttonStyle="primary"
-          label={i18n("submit")}
-          onPress={p.handleSubmit}
-        />
-      </UrbiForm>
-    );
-  }
+  const renderForm = (p: UrbiFormProps) => (
+    <UrbiForm
+      {...p}
+      handleSubmit={p.handleSubmit}
+      parentScrollView={scrollView}
+      scrollViewAnchor={scrollViewAnchor}
+      autoScroll
+    >
+      <ListItemTextInput
+        name="drivingLicense.number"
+        label={i18n("dl_number")}
+        type="text"
+        focusable
+      />
+      <DatePicker
+        name="drivingLicense.issueDate"
+        label={i18n("dl_issueDate")}
+        mode="date"
+        locale={appLocaleShort}
+        focusable
+      />
+      <DatePicker
+        name="drivingLicense.expiryDate"
+        label={i18n("dl_expiryDate")}
+        mode="date"
+        locale={appLocaleShort}
+        focusable
+      />
+      <ButtonRegular
+        style={styles.button}
+        buttonStyle="primary"
+        label={i18n("submit")}
+        onPress={p.handleSubmit}
+      />
+    </UrbiForm>
+  );
 
-  render = () => (
+  return (
     <SafeAreaView style={styles.wrapper}>
       <ScrollView
-        ref={this.scrollView}
+        ref={scrollView}
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
-        onLayout={this.onLayout}
+        onLayout={onLayout}
       >
-        <Formik
-          initialValues={this.state.validationFormData}
-          onSubmit={this.onSubmit}
-        >
-          {this.renderForm}
+        <Formik initialValues={validationFormData} onSubmit={onSubmit}>
+          {renderForm}
         </Formik>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
-export default ValidationDrivingLicenseForm;
+export default React.memo(ValidationDrivingLicenseForm);
