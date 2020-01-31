@@ -18,6 +18,7 @@ import { registeredTextStyle } from "react-native-urbi-ui/utils/textStyles";
 import { RootStackProp } from "src/App";
 import { i18n } from "src/i18n";
 import { SplashScreen } from "src/screens/SplashScreen";
+import { log } from "src/utils";
 import { createKeystore, sign, UrbiKeyStore } from "src/utils/cryptoUtils";
 import SecureStore from "src/utils/SecureStore";
 
@@ -91,7 +92,7 @@ const openApp = (
     const url = `${callbackUrl}?consent=${consent}&payload=${payload}${
       challengeResponse ? `&response=${challengeResponse}` : ""
     }`;
-    console.log(`callback deep link: ${url}`);
+    log(`callback deep link: ${url}`);
     await Linking.openURL(url);
   } catch (err) {
     Alert.alert(

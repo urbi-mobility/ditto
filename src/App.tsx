@@ -22,6 +22,7 @@ import { enableScreens } from "react-native-screens";
 import { colors } from "react-native-urbi-ui/utils/colors";
 import { onIOS } from "react-native-urbi-ui/utils/const";
 import { textStyle } from "react-native-urbi-ui/utils/textStyles";
+import "src/globals";
 import { i18n } from "src/i18n";
 import {
   emptyValidationFormData,
@@ -31,17 +32,17 @@ import {
 import { ConsentScreen } from "src/screens/ConsentScreen";
 import { HelpScreen } from "src/screens/HelpScreen";
 import { HomeScreen } from "src/screens/HomeScreen";
+import ModalScreen from "src/screens/ModalScreen";
 import { OnboardingScreen } from "src/screens/OnboardingScreen";
 import { ProfileScreen } from "src/screens/ProfileScreen";
 import { SplashScreen } from "src/screens/SplashScreen";
 import ValidationDrivingLicenseForm from "src/screens/validation/ValidationDrivingLicenseForm";
 import ValidationPersonalForm from "src/screens/validation/ValidationPersonalForm";
 import ValidationStartPage from "src/screens/validation/ValidationStartPage";
+import { log } from "src/utils";
 import images from "src/utils/images";
 import { LoadingOverlay } from "src/utils/LoadingOverlay";
 import SecureStore from "src/utils/SecureStore";
-import "./globals";
-import ModalScreen from "./screens/ModalScreen";
 
 enableScreens();
 
@@ -255,7 +256,7 @@ const App = () => {
       setTimeout(() => setOnboarding(value === "done" ? "done" : "todo"), 1000)
     );
     SecureStore.getItemAsync("user").then(value => {
-      console.log(`user from disk: ${value ? JSON.stringify(value) : value}`);
+      log(`user from disk: ${value ? JSON.stringify(value) : value}`);
       setHasSavedData(value !== null && value !== undefined);
     });
   }, []);

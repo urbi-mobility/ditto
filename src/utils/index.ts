@@ -14,3 +14,7 @@ export const callNoSoonerThanSecondsFrom = (
   if (diff < millis) setTimeout(call, millis - diff);
   else call();
 };
+
+const SUPPRESS_LOGS = true;
+
+export const log = (m: any) => (SUPPRESS_LOGS ? null : console.log(m));

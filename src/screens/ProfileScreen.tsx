@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/core";
 import { differenceInSeconds } from "date-fns";
-import React, { useContext, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { ListItem } from "react-native-urbi-ui/components/ListItem";
@@ -14,6 +14,7 @@ import { onPressShowNotYet } from "react-native-urbi-ui/utils/functions";
 import { SavedDataContext } from "src/App";
 import { i18n } from "src/i18n";
 import { emptyValidationFormData } from "src/models";
+import { log } from "src/utils";
 import { deserializeUserData } from "src/utils/jsonUtils";
 import SecureStore from "src/utils/SecureStore";
 
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
 
 const loadUserFromDisk = async () => {
   const stored: string | undefined = await SecureStore.getItemAsync("user");
-  console.log(`userData: ${stored}`);
+  log(`userData: ${stored}`);
   const userData = stored ? deserializeUserData(stored) : undefined;
   return userData;
 };
@@ -39,15 +40,20 @@ export const ProfileScreen = () => {
   );
   const { setHasSavedData } = useContext(SavedDataContext);
 
-  const loadFromStorage = () => {
-    loadUserFromDisk().then(user => {
-      navigation.setOptions({
-        headerTitle: i18n("navigation_profile", {
-          name: user?.firstName ? ` ${user.firstName}` : ""
-        })
-      });
-      setValidationFormData(user ?? emptyValidationFormData);
+  const updateTitle = () =>
+    navigation.setOptions({
+      headerTitle: i18n("navigation_profile", {
+        name: validationFormData?.firstName
+          ? ` ${validationFormData.firstName}`
+          : ""
+      })
     });
+  useEffect(updateTitle, [validationFormData]);
+
+  const loadFromStorage = () => {
+    loadUserFromDisk().then(user =>
+      setValidationFormData(user ?? emptyValidationFormData)
+    );
   };
   useLayoutEffect(loadFromStorage, []);
 
@@ -55,11 +61,11 @@ export const ProfileScreen = () => {
     navigation.navigate("ValidationPersonalForm", { validationFormData });
 
   const onKeystorePress = () => {
-    console.log("keystore");
+    log("keystore");
   };
 
   const onContractPress = () => {
-    console.log("contract");
+    log("contract");
   };
 
   const onDeletePress = () => {
@@ -72,7 +78,7 @@ export const ProfileScreen = () => {
         navigation.navigate("Loading", { label: i18n("deleting") });
         SecureStore.deleteItemAsync("user").then(_ => {
           const goHome = () => {
-            console.log("no more saved data");
+            log("no more saved data");
             setHasSavedData(false);
             navigation.navigate("Home");
           };
