@@ -141,7 +141,13 @@ const ConsentScreenUnmemoized = (props: RootStackProp<"Consent">) => {
     challenge?: string
   ) => async () => {
     const data = await SecureStore.getItemAsync("user");
-    openApp(provider, callbackUrl, true, data, challenge)();
+    openApp(
+      provider,
+      callbackUrl,
+      true,
+      (data && encodeURIComponent(data)) || undefined,
+      challenge
+    )();
   };
 
   if (showSplash) return <SplashScreen />;

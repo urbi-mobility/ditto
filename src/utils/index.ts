@@ -15,6 +15,6 @@ export const callNoSoonerThanSecondsFrom = (
   else call();
 };
 
-const SUPPRESS_LOGS = true;
+const SUPPRESS_LOGS = false;
 
 export const log = (m: any) => (SUPPRESS_LOGS ? null : console.log(m));
